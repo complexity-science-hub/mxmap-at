@@ -22,16 +22,20 @@ _CATEGORY_MAP: dict[str, str] = {
     "microsoft": "us-cloud",
     "google": "us-cloud",
     "aws": "us-cloud",
-    "infomaniak": "swiss-based",
-    "swiss-isp": "swiss-based",
-    "independent": "swiss-based",
+
+    "a1": "austrian-based",
+    "gemdat": "austrian-based",
+    "ris": "austrian-based",
+    "easyname": "austrian-based",
+    "austria_isp": "austrian-based",
+    "independent": "austrian-based",
 }
 
 
 _FRONTEND_FIELDS = {
     "name",
     "domain",
-    "canton",
+    "federal_state",
     "mx",
     "spf",
     "provider",
@@ -45,13 +49,13 @@ _FRONTEND_FIELDS = {
 def _minify_for_frontend(full_output: dict[str, Any]) -> dict[str, Any]:
     """Strip fields the frontend doesn't use, producing a compact payload."""
     municipalities = {}
-    for bfs, entry in full_output["municipalities"].items():
+    for gkz, entry in full_output["municipalities"].items():
         mini = {k: v for k, v in entry.items() if k in _FRONTEND_FIELDS}
         mini["classification_signals"] = [
             {"kind": s["kind"], "detail": s["detail"]}
             for s in entry.get("classification_signals", [])
         ]
-        municipalities[bfs] = mini
+        municipalities[gkz] = mini
     return {
         "generated": full_output["generated"],
         "commit": full_output.get("commit"),
@@ -71,9 +75,9 @@ def _serialize_result(
     provider = _output_provider(result.provider)
     category = _CATEGORY_MAP.get(provider, "unknown")
     out: dict[str, Any] = {
-        "bfs": entry["bfs"],
+        "gkz": entry["gkz"],
         "name": entry["name"],
-        "canton": entry.get("canton", ""),
+        "federal_state": entry.get("federal_state", ""),
         "domain": entry.get("domain", ""),
         "mx": result.mx_hosts,
         "spf": result.spf_raw,
@@ -132,10 +136,10 @@ async def run(domains_path: Path, output_path: Path) -> None:
 
     # Handle entries without domains
     for entry in no_domain_entries:
-        results[entry["bfs"]] = {
-            "bfs": entry["bfs"],
+        results[entry["gkz"]] = {
+            "gkz": entry["gkz"],
             "name": entry["name"],
-            "canton": entry.get("canton", ""),
+            "federal_state": entry.get("federal_state", ""),
             "domain": "",
             "mx": [],
             "spf": "",
@@ -145,15 +149,15 @@ async def run(domains_path: Path, output_path: Path) -> None:
             "classification_signals": [],
         }
         if "sources_detail" in entry:
-            results[entry["bfs"]]["sources_detail"] = entry["sources_detail"]
+            results[entry["gkz"]]["sources_detail"] = entry["sources_detail"]
         if "flags" in entry:
-            results[entry["bfs"]]["resolve_flags"] = entry["flags"]
+            results[entry["gkz"]]["resolve_flags"] = entry["flags"]
 
     # Classify domains
     async for domain, classification in classify_many(unique_domains):
         for entry in domain_to_entries[domain]:
             serialized = _serialize_result(entry, classification)
-            results[entry["bfs"]] = serialized
+            results[entry["gkz"]] = serialized
 
         done += len(domain_to_entries[domain])
         cat_progress: dict[str, int] = {}
@@ -190,16 +194,19 @@ async def run(domains_path: Path, output_path: Path) -> None:
         counts.get("aws", 0),
     )
     logger.info(
-        "  Swiss Based      {:>5}  (Infomaniak={} ISP={} Indep={})",
-        cat_counts.get("swiss-based", 0),
-        counts.get("infomaniak", 0),
-        counts.get("swiss-isp", 0),
+        "  Austria Based      {:>5}  (ISP={} Indep={} A1={} RIS={} Gemdat={} Easyname={})",
+        cat_counts.get("austrian-based", 0),
+        counts.get("austria-isp", 0),
         counts.get("independent", 0),
+        counts.get("a1", 0),
+        counts.get("ris", 0),
+        counts.get("gemdat", 0),
+        counts.get("easyname", 0),
     )
     logger.info("  Unknown/No MX    {:>5}", cat_counts.get("unknown", 0))
 
     sorted_counts = dict(sorted(counts.items()))
-    sorted_munis = dict(sorted(results.items(), key=lambda kv: int(kv[0])))
+    sorted_munis = dict(sorted(results.items(), key=lambda kv: kv[1]["name"]))
 
     commit = (
         subprocess.run(

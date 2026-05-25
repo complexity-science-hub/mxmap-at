@@ -13,23 +13,23 @@
 <link rel="dns-prefetch" href="https://b.basemaps.cartocdn.com">
 <link rel="dns-prefetch" href="https://c.basemaps.cartocdn.com">
 <link rel="dns-prefetch" href="https://d.basemaps.cartocdn.com">
-<title>MXmap | Email Providers of Swiss Municipalities</title>
-<meta name="description" content="Interactive map showing the email providers of all ~2,100 Swiss municipalities, based on DNS analysis of MX and SPF records.">
-<meta name="keywords" content="Switzerland, municipalities, email, sovereignty, CLOUD Act, MX records, SPF, DNS, Microsoft 365, Google Workspace, digital sovereignty, data protection">
+<title>MXmap | Email Providers of Austrian Municipalities</title>
+<meta name="description" content="Interactive map showing the email providers of all ~2,100 Austrian municipalities, based on DNS analysis of MX and SPF records.">
+<meta name="keywords" content="Austria, municipalities, email, sovereignty, CLOUD Act, MX records, SPF, DNS, Microsoft 365, Google Workspace, digital sovereignty, data protection">
 <meta name="author" content="David Huser">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://mxmap.ch/">
+<link rel="canonical" href="https://mxmap.at/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="MXmap | Email Providers of Swiss Municipalities">
-<meta property="og:description" content="Interactive map showing where Swiss municipalities host their official email. DNS analysis of all ~2,100 municipalities, color-coded by provider.">
-<meta property="og:url" content="https://mxmap.ch/">
-<meta property="og:locale" content="en_CH">
+<meta property="og:title" content="MXmap | Email Providers of Austrian Municipalities">
+<meta property="og:description" content="Interactive map showing where Austrian municipalities host their official email. DNS analysis of all ~2,100 municipalities, color-coded by provider.">
+<meta property="og:url" content="https://mxmap.at/">
+<meta property="og:locale" content="en_AT">
 <meta property="og:site_name" content="MXmap">
-<meta property="og:image" content="https://mxmap.ch/og-image.jpg">
+<meta property="og:image" content="https://mxmap.at/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MXmap | Email Providers of Swiss Municipalities">
-<meta name="twitter:description" content="Interactive map showing where Swiss municipalities host their official email. DNS analysis of all ~2,100 municipalities.">
-<meta name="twitter:image" content="https://mxmap.ch/og-image.jpg">
+<meta name="twitter:title" content="MXmap | Email Providers of Austrian Municipalities">
+<meta name="twitter:description" content="Interactive map showing where Austrian municipalities host their official email. DNS analysis of all ~2,100 municipalities.">
+<meta name="twitter:image" content="https://mxmap.at/og-image.jpg">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='7' width='28' height='18' rx='2' fill='%231a1a2e'/%3E%3Cpath d='M2 9l14 9 14-9' fill='none' stroke='%2316a34a' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="css/shared.css">
 <link rel="stylesheet" href="css/map.css">
@@ -53,11 +53,11 @@
 </header>
 <section id="info-bar" aria-label="About this project">
 <script>if(window.innerWidth<=600)document.getElementById('info-bar').classList.add('collapsed');</script>
-  <h2 class="info-title">Email Providers of Swiss Municipalities</h2>
+  <h2 class="info-title">Email Providers of Austrian Municipalities</h2>
   <div class="info-grid">
     <div class="info-card">
       <h3>What is this?</h3>
-      <p>A map of all ~2,100 Swiss municipalities, grouped by jurisdiction. Each is colored by the provider handling its official email, based on public DNS records and other public network signals.</p>
+      <p>A map of all ~2,100 Austrian municipalities, grouped by jurisdiction. Each is colored by the provider handling its official email, based on public DNS records and other public network signals.</p>
     </div>
     <div class="info-card">
       <h3>Context</h3>
@@ -78,7 +78,7 @@
     </div>
   </div>
 </section>
-<main id="map" role="application" aria-label="Interactive map of Swiss municipality email providers">
+<main id="map" role="application" aria-label="Interactive map of Austrian municipality email providers">
   <div id="map-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000;background:rgba(255,255,255,0.85);font-size:15px;color:#555;">Loading map data&hellip;</div>
 </main>
 
@@ -86,37 +86,36 @@
 document.addEventListener('DOMContentLoaded', function () {
 const COLOR_SCHEMES = {
   default: {
-    'us-cloud':    { high: '#ff9e91', medium: '#ffccaa', low: '#cccccc' },
-    'swiss-based': { high: '#88faaa', medium: '#daffc2', low: '#cccccc' },
+    'us-cloud':      { high: '#ff9e91', medium: '#ffccaa', low: '#cccccc' },
+    'austrian-based': { high: '#88faaa', medium: '#daffc2', low: '#cccccc' },
     lake: '#a3cef1',
   },
   colorblind: {
-    'us-cloud':    { high: '#f1be61', medium: '#fde7c4', low: '#cccccc' },
-    'swiss-based': { high: '#6fa2d0', medium: '#C0D8E8', low: '#cccccc' },
+    'us-cloud':      { high: '#f1be61', medium: '#fde7c4', low: '#cccccc' },
+    'austrian-based': { high: '#6fa2d0', medium: '#C0D8E8', low: '#cccccc' },
     lake: '#c4afff',
   },
 };
 var CATEGORY_COLORS = COLOR_SCHEMES.default;
 const GRAY = '#BFBFBF';
 
-const CANTON_CODES = {
-  'Kanton Zürich': 'ZH', 'Kanton Bern': 'BE', 'Kanton Luzern': 'LU',
-  'Kanton Uri': 'UR', 'Kanton Schwyz': 'SZ', 'Kanton Obwalden': 'OW',
-  'Kanton Nidwalden': 'NW', 'Kanton Glarus': 'GL', 'Kanton Zug': 'ZG',
-  'Kanton Freiburg': 'FR', 'Kanton Solothurn': 'SO', 'Kanton Basel-Stadt': 'BS',
-  'Kanton Basel-Landschaft': 'BL', 'Kanton Schaffhausen': 'SH',
-  'Kanton Appenzell Ausserrhoden': 'AR', 'Kanton Appenzell Innerrhoden': 'AI',
-  'Kanton St. Gallen': 'SG', 'Kanton Graubünden': 'GR', 'Kanton Aargau': 'AG',
-  'Kanton Thurgau': 'TG', 'Kanton Tessin': 'TI', 'Kanton Waadt': 'VD',
-  'Kanton Wallis': 'VS', 'Kanton Neuenburg': 'NE', 'Kanton Genf': 'GE',
-  'Kanton Jura': 'JU'
+const AUSTRIAN_STATES = {
+  'Burgenland': '1',
+  'Kärnten': '2', 
+  'Niederösterreich': '3',
+  'Oberösterreich': '4',
+  'Salzburg': '5',
+  'Steiermark': '6',
+  'Tirol': '7',
+  'Vorarlberg': '8',
+  'Wien': '9'
 };
 const LABELS = {
   microsoft:      'Microsoft 365',
   google:         'Google Workspace',
   aws:            'Amazon Web Services',
   infomaniak:     'Infomaniak',
-  'swiss-isp':    'Swiss ISP',
+  'austrian-isp': 'Austrian ISP',
   'independent':  'Self-hosted / Other',
   unknown:        'Unknown'
 };
@@ -151,8 +150,8 @@ function classifyHost(host) {
   if (['amazonaws','amazonses','awsdns'].some(k => h.includes(k)))
     return { name: 'AWS', category: 'hyperscaler' };
   // Swiss (explicit)
-  if (['infomaniak','mxpool.infomaniak'].some(k => h.includes(k)))
-    return { name: 'Infomaniak', category: 'swiss' };
+  //if (['infomaniak','mxpool.infomaniak'].some(k => h.includes(k)))
+  //  return { name: 'Infomaniak', category: 'swiss' };
   // Foreign senders
   if (['mandrillapp.com','mandrill','mcsv.net'].some(k => h.includes(k)))
     return { name: 'Mailchimp', category: 'foreign' };
@@ -243,8 +242,8 @@ function classifyHost(host) {
     return { name: 'Evalanche', category: 'foreign' };
   if (h.includes('rubicon.eu'))
     return { name: 'Rubicon', category: 'foreign' };
-  // Known Swiss providers with non-.ch TLDs
-  const SWISS_DOMAINS = [
+  // Known Swiss providers with non-.ch TLDs -- TODO: Add Austrian providers
+  const SWISS_DOMAINS = [  
     'abxsec.com','swiss-egov.cloud','sui-inter.net','ch-dns.net','cyon.net',
     'seppmail.cloud','swisscom.com','privasphere.com','tinext.com','cloudrexx.com',
     'mailomat.cloud','comp-sys.net','engadin.cloud','ti-informatique.com',
@@ -257,8 +256,8 @@ function classifyHost(host) {
   // TLD-based fallback
   const parts = host.replace(/^_/, '').split('.');
   const name = parts.length >= 2 ? parts.slice(-2).join('.') : host;
-  if (h.endsWith('.ch') || h.endsWith('.swiss'))
-    return { name, category: 'swiss' };
+  if (h.endsWith('.at') || h.endsWith('.austria'))
+    return { name, category: 'austria' };
   return { name, category: 'unknown' };
 }
 
@@ -367,8 +366,8 @@ function toggleColorScheme() {
   CATEGORY_COLORS = isDefault ? COLOR_SCHEMES.colorblind : COLOR_SCHEMES.default;
 
   muniLayer.eachLayer(function (layer) {
-    var bfs = String(layer.feature.id);
-    var m = muni[bfs];
+    var iso = String(layer.feature.properties.iso);
+    var m = muni[iso];
     layer.setStyle({ fillColor: getColor(m) });
   });
 
@@ -403,13 +402,14 @@ async function loadData() {
   showGenerated(dnsData);
 
   // Count by jurisdiction and confidence level
-  const catCounts = { 'us-cloud': 0, 'swiss-based': 0 };
+  const catCounts = { 'us-cloud': 0, 'austrian-based': 0 };
   const levelCounts = {
     'us-cloud': { high: 0, medium: 0, low: 0 },
-    'swiss-based': { high: 0, medium: 0, low: 0 }
+    'austrian-based': { high: 0, medium: 0, low: 0 }
   };
-  for (const bfs of Object.keys(muni)) {
-    const m = muni[bfs];
+
+  for (const iso of Object.keys(muni)) {
+    const m = muni[iso];
     const cat = effectiveCategory(m);
     if (cat) {
       catCounts[cat]++;
@@ -428,7 +428,7 @@ async function loadData() {
       '<button class="legend-toggle" aria-label="Toggle legend" aria-expanded="' + (!isMobile) + '">' + (isMobile ? 'Legend \u25B8' : '') + '</button>' +
       '<div class="legend-content">' +
       legendCategoryHtml('US Cloud', CATEGORY_COLORS['us-cloud'], catCounts['us-cloud'], 'us-cloud', levelCounts['us-cloud']) +
-      legendCategoryHtml('Swiss Based', CATEGORY_COLORS['swiss-based'], catCounts['swiss-based'], 'swiss-based', levelCounts['swiss-based']) +
+      legendCategoryHtml('Austrian Based', CATEGORY_COLORS['austrian-based'], catCounts['austrian-based'], 'austrian-based', levelCounts['austrian-based']) +
       '<div class="legend-group legend-other">' +
       '<i class="legend-swatch" data-lake="1" style="background:' + CATEGORY_COLORS.lake + '"></i>Lake (not a municipality)' +
       '</div>' +
@@ -441,16 +441,17 @@ async function loadData() {
   document.querySelector('.legend-toggle').addEventListener('click', toggleLegend);
   document.querySelector('.color-toggle').addEventListener('click', toggleColorScheme);
 
-  // Render lakes
-  lakeLayer = addLakes(map, topo, CATEGORY_COLORS.lake);
+  // Render lakes (not available in Austrian data)
+  // lakeLayer = addLakes(map, topo, CATEGORY_COLORS.lake);
 
   // Render municipalities
-  const geojson = topojson.feature(topo, topo.objects.municipalities);
+  console.log(topo.objects)
+  const geojson = topojson.feature(topo, topo.objects.gemeinden);
 
   muniLayer = L.geoJSON(geojson, {
     style: function (feature) {
-      const bfs = String(feature.id);
-      const m = muni[bfs];
+      const iso = String(feature.properties.iso);
+      const m = muni[iso];
       return {
         fillColor: getColor(m),
         weight: 0.6,
@@ -459,10 +460,10 @@ async function loadData() {
       };
     },
     onEachFeature: function (feature, layer) {
-      const bfs = String(feature.id);
-      const m = muni[bfs];
+      const iso = String(feature.properties.iso);
+      const m = muni[iso];
       if (!m) {
-        layer.bindPopup(`<div class="info-popup"><strong>BFS ${bfs}</strong><br>No data</div>`);
+        layer.bindPopup(`<div class="info-popup"><strong>ISO ${iso}</strong><br>No data</div>`);
         return;
       }
       const color = getColor(m);
@@ -508,8 +509,8 @@ async function loadData() {
       }
 
       const eName = escapeHtml(m.name);
-      const cantonCode = CANTON_CODES[m.canton] || '';
-      const nameDisplay = cantonCode ? `${eName} (${cantonCode})` : eName;
+      const stateCode = AUSTRIAN_STATES[m.state] || '';
+      const nameDisplay = stateCode ? `${eName} (${stateCode})` : eName;
       const eDomain = escapeHtml(m.domain || 'unknown');
       const eLabel = escapeHtml(label);
       const badge = `<span class="provider-badge" style="background:${color};color:${textColor}">${eLabel}</span>`;

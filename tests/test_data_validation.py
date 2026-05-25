@@ -14,8 +14,8 @@ import pytest
 from mail_sovereignty.models import Provider
 from mail_sovereignty.pipeline import PROVIDER_OUTPUT_NAMES
 
-_MUNICIPALITY_DOMAINS_PATH = Path("municipality_domains.json")
-_DATA_JSON_PATH = Path("data.json")
+_MUNICIPALITY_DOMAINS_PATH = Path("data/municipality_domains.json")
+_DATA_JSON_PATH = Path("data/data.json")
 
 # Build valid provider output names: all mapped values + all unmapped enum values
 _VALID_PROVIDER_NAMES = {PROVIDER_OUTPUT_NAMES.get(p.value, p.value) for p in Provider}
@@ -83,9 +83,9 @@ class TestMunicipalityDomainsStructure:
 
 class TestMunicipalityDomainsEntries:
     _REQUIRED_FIELDS = {
-        "bfs",
+        "gkz",
         "name",
-        "canton",
+        "federal_state",
         "domain",
         "source",
         "confidence",
@@ -104,12 +104,12 @@ class TestMunicipalityDomainsEntries:
             ),
         )
 
-    def test_bfs_key_matches_entry(self, municipality_domains_data):
+    def test_gkz_key_matches_entry(self, municipality_domains_data):
         entries = municipality_domains_data["municipalities"]
         _collect_failures(
             entries,
             lambda k, e: (
-                f"key={k} but bfs={e.get('bfs')}" if k != e.get("bfs") else None
+                f"key={k} but gkz={e.get('gkz')}" if k != e.get("gkz") else None
             ),
         )
 
@@ -120,11 +120,11 @@ class TestMunicipalityDomainsEntries:
             lambda k, e: f"{k}: empty name" if not e.get("name") else None,
         )
 
-    def test_bfs_is_numeric(self, municipality_domains_data):
+    def test_gkz_is_numeric(self, municipality_domains_data):
         entries = municipality_domains_data["municipalities"]
         _collect_failures(
             entries,
-            lambda k, e: f"{k}: non-numeric BFS" if not k.isdigit() else None,
+            lambda k, e: f"{k}: non-numeric GKZ" if not k.isdigit() else None,
         )
 
     def test_domain_nonempty_when_high_confidence(self, municipality_domains_data):
@@ -175,7 +175,7 @@ class TestDataJsonStructure:
 
 class TestDataJsonEntries:
     _REQUIRED_FIELDS = {
-        "bfs",
+        "gkz",
         "name",
         "domain",
         "mx",
@@ -196,12 +196,12 @@ class TestDataJsonEntries:
             ),
         )
 
-    def test_bfs_key_matches_entry(self, data_json_data):
+    def test_gkz_key_matches_entry(self, data_json_data):
         entries = data_json_data["municipalities"]
         _collect_failures(
             entries,
             lambda k, e: (
-                f"key={k} but bfs={e.get('bfs')}" if k != e.get("bfs") else None
+                f"key={k} but gkz={e.get('gkz')}" if k != e.get("gkz") else None
             ),
         )
 
@@ -266,11 +266,11 @@ class TestDataJsonEntries:
             lambda k, e: f"{k}: empty name" if not e.get("name") else None,
         )
 
-    def test_bfs_is_numeric(self, data_json_data):
+    def test_gkz_is_numeric(self, data_json_data):
         entries = data_json_data["municipalities"]
         _collect_failures(
             entries,
-            lambda k, e: f"{k}: non-numeric BFS" if not k.isdigit() else None,
+            lambda k, e: f"{k}: non-numeric GKZ" if not k.isdigit() else None,
         )
 
 
@@ -346,13 +346,13 @@ class TestDataJsonAggregates:
 
 
 class TestCrossFileConsistency:
-    def test_same_bfs_keys(self, municipality_domains_data, data_json_data):
+    def test_same_gkz_keys(self, municipality_domains_data, data_json_data):
         md_keys = set(municipality_domains_data["municipalities"].keys())
         dj_keys = set(data_json_data["municipalities"].keys())
         only_md = md_keys - dj_keys
         only_dj = dj_keys - md_keys
         assert not only_md and not only_dj, (
-            f"BFS mismatch: {len(only_md)} only in municipality_domains, "
+            f"GKZ mismatch: {len(only_md)} only in municipality_domains, "
             f"{len(only_dj)} only in data.json"
         )
 
@@ -361,11 +361,11 @@ class TestCrossFileConsistency:
         dj = data_json_data["municipalities"]
         common = set(md.keys()) & set(dj.keys())
         failures = []
-        for bfs in common:
-            md_name = md[bfs].get("name")
-            dj_name = dj[bfs].get("name")
+        for gkz in common:
+            md_name = md[gkz].get("name")
+            dj_name = dj[gkz].get("name")
             if md_name != dj_name:
-                failures.append(f"{bfs}: '{md_name}' vs '{dj_name}'")
+                failures.append(f"{gkz}: '{md_name}' vs '{dj_name}'")
         if failures:
             shown = failures[:10]
             summary = "\n".join(shown)
@@ -378,11 +378,11 @@ class TestCrossFileConsistency:
         dj = data_json_data["municipalities"]
         common = set(md.keys()) & set(dj.keys())
         failures = []
-        for bfs in common:
-            md_domain = md[bfs].get("domain", "")
-            dj_domain = dj[bfs].get("domain", "")
+        for gkz in common:
+            md_domain = md[gkz].get("domain", "")
+            dj_domain = dj[gkz].get("domain", "")
             if md_domain != dj_domain:
-                failures.append(f"{bfs}: '{md_domain}' vs '{dj_domain}'")
+                failures.append(f"{gkz}: '{md_domain}' vs '{dj_domain}'")
         if failures:
             shown = failures[:10]
             summary = "\n".join(shown)
@@ -395,11 +395,11 @@ class TestCrossFileConsistency:
         dj = data_json_data["municipalities"]
         common = set(md.keys()) & set(dj.keys())
         failures = []
-        for bfs in common:
-            md_flags = md[bfs].get("flags", [])
-            dj_flags = dj[bfs].get("resolve_flags", [])
+        for gkz in common:
+            md_flags = md[gkz].get("flags", [])
+            dj_flags = dj[gkz].get("resolve_flags", [])
             if md_flags and not dj_flags:
-                failures.append(f"{bfs}: resolver flags {md_flags} not in data.json")
+                failures.append(f"{gkz}: resolver flags {md_flags} not in data.json")
         if failures:
             shown = failures[:10]
             summary = "\n".join(shown)

@@ -13,7 +13,7 @@ from .models import Evidence, Provider, SignalKind
 from .signatures import (
     GATEWAY_KEYWORDS,
     SIGNATURES,
-    SWISS_ISP_ASNS,
+    AUSTRIA_ISP_ASNS,
     match_patterns,
 )
 
@@ -332,7 +332,7 @@ async def probe_tenant(domain: str) -> list[Evidence]:
 
 
 async def probe_asn(mx_hosts: list[str]) -> list[Evidence]:
-    """Resolve MX IPs, query Team Cymru for ASN, match against providers + Swiss ISPs."""
+    """Resolve MX IPs, query Team Cymru for ASN, match against providers + Austrian ISPs."""
     results: list[Evidence] = []
 
     for host in mx_hosts:
@@ -375,15 +375,15 @@ async def probe_asn(mx_hosts: list[str]) -> list[Evidence]:
                             )
                         )
 
-                # Check Swiss ISP ASNs
-                if asn_num in SWISS_ISP_ASNS:
-                    isp_name = SWISS_ISP_ASNS[asn_num]
+                # Check Austrian ISP ASNs
+                if asn_num in AUSTRIA_ISP_ASNS:
+                    isp_name = AUSTRIA_ISP_ASNS[asn_num]
                     results.append(
                         Evidence(
                             kind=SignalKind.ASN,
-                            provider=Provider.SWISS_ISP,
+                            provider=Provider.AUSTRIA_ISP,
                             weight=WEIGHTS[SignalKind.ASN],
-                            detail=f"ASN {asn_num} is Swiss ISP: {isp_name}",
+                            detail=f"ASN {asn_num} is Austrian ISP: {isp_name}",
                             raw=str(asn_num),
                         )
                     )
@@ -431,7 +431,7 @@ async def probe_txt_verification(domain: str) -> list[Evidence]:
 
 
 async def probe_spf_ip(domain: str) -> list[Evidence]:
-    """Parse SPF ip4: and a: entries, resolve IPs to ASN, match against providers + Swiss ISPs."""
+    """Parse SPF ip4: and a: entries, resolve IPs to ASN, match against providers + Austrian ISPs."""
     results: list[Evidence] = []
     answer = await resolve_robust(domain, "TXT")
     if answer is None:
@@ -489,14 +489,14 @@ async def probe_spf_ip(domain: str) -> list[Evidence]:
                         )
                     )
 
-            if asn_num in SWISS_ISP_ASNS:
-                isp_name = SWISS_ISP_ASNS[asn_num]
+            if asn_num in AUSTRIA_ISP_ASNS:
+                isp_name = AUSTRIA_ISP_ASNS[asn_num]
                 results.append(
                     Evidence(
                         kind=SignalKind.SPF_IP,
-                        provider=Provider.SWISS_ISP,
+                        provider=Provider.AUSTRIA_ISP,
                         weight=WEIGHTS[SignalKind.SPF_IP],
-                        detail=f"SPF ip4/a ASN {asn_num} is Swiss ISP: {isp_name}",
+                        detail=f"SPF ip4/a ASN {asn_num} is Austrian ISP: {isp_name}",
                         raw=f"{ip}:{asn_num}",
                     )
                 )

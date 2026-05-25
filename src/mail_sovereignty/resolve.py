@@ -1,4 +1,5 @@
 import asyncio
+import pandas as pd
 import json
 import re
 import ssl
@@ -12,11 +13,10 @@ import httpx
 import stamina
 from loguru import logger
 
-from mail_sovereignty.bfs_api import fetch_bfs_municipalities
 from mail_sovereignty.constants import (
-    CANTON_ABBREVIATIONS,
     CONCURRENCY_POSTPROCESS,
     EMAIL_RE,
+    FEDERAL_STATES,
     SKIP_DOMAINS,
     SPARQL_QUERY,
     SPARQL_URL,
@@ -24,6 +24,7 @@ from mail_sovereignty.constants import (
     TYPO3_RE,
 )
 from mail_sovereignty.dns import lookup_mx
+from mail_sovereignty.extract_austria_municipalities import main as extract_austria_municipalities
 
 
 def url_to_domain(url: str | None) -> str | None:
@@ -43,72 +44,72 @@ def _slugify_name(name: str) -> set[str]:
     raw = re.sub(r"\s*\(.*?\)\s*", "", raw)
 
     # German umlaut transliteration
-    de = raw.replace("\u00fc", "ue").replace("\u00e4", "ae").replace("\u00f6", "oe")
-    # French accent removal
-    fr = raw
-    for a, b in [
-        ("\u00e9", "e"),
-        ("\u00e8", "e"),
-        ("\u00ea", "e"),
-        ("\u00eb", "e"),
-        ("\u00e0", "a"),
-        ("\u00e2", "a"),
-        ("\u00f4", "o"),
-        ("\u00ee", "i"),
-        ("\u00f9", "u"),
-        ("\u00fb", "u"),
-        ("\u00e7", "c"),
-        ("\u00ef", "i"),
-    ]:
-        fr = fr.replace(a, b)
+    de = (
+        raw
+        .replace("\u00fc", "ue")
+        .replace("\u00e4", "ae")
+        .replace("\u00f6", "oe")
+        .replace("\u00df", "ss")
+    )
 
     def slugify(s):
         s = re.sub(r"['\u2019`]", "", s)
         s = re.sub(r"[^a-z0-9]+", "-", s)
         return s.strip("-")
 
-    return {slugify(de), slugify(fr), slugify(raw)} - {""}
+    return {slugify(de), slugify(raw)} - {""}
 
 
-def guess_domains(name: str, canton: str = "") -> list[str]:
+def guess_domains(name: str, federal_state: str = "") -> list[str]:
     """Generate a set of plausible domain guesses for a municipality."""
 
     def _slugs_for(text: str) -> set[str]:
         raw = text.lower().strip()
         raw = re.sub(r"\s*\(.*?\)\s*", "", raw)
 
-        de = raw.replace("\u00fc", "ue").replace("\u00e4", "ae").replace("\u00f6", "oe")
-        fr = raw
-        for a, b in [
-            ("\u00e9", "e"),
-            ("\u00e8", "e"),
-            ("\u00ea", "e"),
-            ("\u00eb", "e"),
-            ("\u00e0", "a"),
-            ("\u00e2", "a"),
-            ("\u00f4", "o"),
-            ("\u00ee", "i"),
-            ("\u00f9", "u"),
-            ("\u00fb", "u"),
-            ("\u00e7", "c"),
-            ("\u00ef", "i"),
-        ]:
-            fr = fr.replace(a, b)
+        de = (
+            raw
+            .replace("\u00fc", "ue")
+            .replace("\u00e4", "ae")
+            .replace("\u00f6", "oe")
+            .replace("\u00df", "ss")
+        )
 
         def slugify(s):
             s = re.sub(r"['\u2019`]", "", s)
             s = re.sub(r"[^a-z0-9]+", "-", s)
             return s.strip("-")
 
-        slugs = {slugify(de), slugify(fr), slugify(raw)} - {""}
+        slugs = {slugify(de), slugify(raw)} - {""}
 
         # Compound name handling: join all words
         # e.g. "Rüti bei Lyssach" -> "ruetibeilyssach.ch"
         extras = set()
-        for variant in [de, fr, raw]:
+        for variant in [de, raw]:
             joined = slugify(variant).replace("-", "")
             if joined and joined not in slugs:
                 extras.add(joined)
+
+        # First-word handling
+        # e.g. "Oggau am Neusiedler See" -> "oggau.at"
+        for variant in [de, raw]:
+            first = variant.split()[0] if variant.split() else ""
+            if first != "sankt":
+                first_slug = slugify(first)
+
+                if first_slug and first_slug not in slugs:
+                    extras.add(first_slug)
+            
+            if first == "sankt":
+                second = variant.split()[1] if len(variant.split()) > 1 else ""
+                second_slug = slugify(second)
+
+                if second_slug and second_slug not in slugs:
+                    extras.add(second_slug)
+                    extras.add(f"sankt{second_slug}")
+                    extras.add(f"st{second_slug}")
+                    extras.add(f"sankt-{second_slug}")
+                    extras.add(f"st-{second_slug}")
 
         return slugs, extras
 
@@ -131,19 +132,19 @@ def guess_domains(name: str, canton: str = "") -> list[str]:
             all_extras |= extras
 
     candidates = set()
-    canton_abbrev = CANTON_ABBREVIATIONS.get(canton, "")
+    federal_state_key = FEDERAL_STATES.get(federal_state, "")
 
     for slug in all_slugs:
-        candidates.add(f"{slug}.ch")
-        candidates.add(f"gemeinde-{slug}.ch")
-        candidates.add(f"commune-de-{slug}.ch")
-        candidates.add(f"comune-di-{slug}.ch")
-        candidates.add(f"stadt-{slug}.ch")
-        if canton_abbrev:
-            candidates.add(f"{slug}.{canton_abbrev}.ch")
+        candidates.add(f"{slug}.at")
+        candidates.add(f"gemeinde-{slug}.at")
+        candidates.add(f"stadt-{slug}.at")
+        candidates.add(f"marktg-{slug}.at")
+        candidates.add(f"markt-{slug}.at")
+        if federal_state_key:
+            candidates.add(f"{slug}.{federal_state_key}.at")
 
     for joined in all_extras:
-        candidates.add(f"{joined}.ch")
+        candidates.add(f"{joined}.at")
 
     return sorted(candidates)
 
@@ -159,8 +160,8 @@ def detect_website_mismatch(name: str, website_domain: str) -> bool:
     domain_lower = website_domain.lower()
     slugs = _slugify_name(name)
 
-    # Handle common prefixes
-    prefixes = ["stadt-", "gemeinde-", "commune-de-", "comune-di-"]
+    # Handle common Austrian prefixes
+    prefixes = ["stadt-", "gemeinde-", "marktg-", "markt-"]
     domain_stripped = domain_lower
     for prefix in prefixes:
         if domain_stripped.startswith(prefix):
@@ -171,7 +172,7 @@ def detect_website_mismatch(name: str, website_domain: str) -> bool:
     domain_base = (
         domain_stripped.rsplit(".", 1)[0] if "." in domain_stripped else domain_stripped
     )
-    # Strip canton subdomain: e.g. teufen.ar.ch -> teufen
+    # Strip federal state subdomain: e.g. wien.at -> wien
     parts = domain_base.split(".")
     domain_base_first = parts[0] if parts else domain_base
 
@@ -247,7 +248,7 @@ def score_domain_sources(
     source_count = len(best_sources)
 
     # Determine primary source (in priority order)
-    source_priority = ["scrape", "redirect", "wikidata", "guess"]
+    source_priority = ["staedtebund", "scrape", "redirect", "wikidata", "guess"]
     source = next((s for s in source_priority if s in best_sources), best_sources[0])
 
     flags: list[str] = []
@@ -264,7 +265,7 @@ def score_domain_sources(
     # Check for disagreement: only flag when a primary source found domains
     # but none match the best domain. Extra domains from guess or within scrape
     # don't count as disagreement.
-    primary_sources = ["scrape", "redirect", "wikidata"]
+    primary_sources = ["staedtebund", "scrape", "redirect", "wikidata"]
     for src in primary_sources:
         src_domains = sources.get(src, set())
         if src_domains and best_domain not in src_domains:
@@ -300,9 +301,8 @@ async def _fetch_sparql(
     r.raise_for_status()
     return r
 
-
 async def fetch_wikidata() -> dict[str, dict[str, str]]:
-    """Query Wikidata for all Swiss municipalities."""
+    """Query Wikidata for Austrian municipalities."""
     logger.info("Fetching municipalities from Wikidata")
     headers = {
         "Accept": "application/sparql-results+json",
@@ -312,22 +312,33 @@ async def fetch_wikidata() -> dict[str, dict[str, str]]:
         r = await _fetch_sparql(client, SPARQL_URL, {"query": SPARQL_QUERY}, headers)
         data = r.json()
 
+    GKZ_TO_STATE = {
+        "1": "Burgenland",
+        "2": "Kärnten",
+        "3": "Niederösterreich",
+        "4": "Oberösterreich",
+        "5": "Salzburg",
+        "6": "Steiermark",
+        "7": "Tirol",
+        "8": "Vorarlberg",
+        "9": "Wien",
+    }
     municipalities = {}
     for row in data["results"]["bindings"]:
-        bfs = row["bfs"]["value"]
-        name = row.get("itemLabel", {}).get("value", f"BFS-{bfs}")
+        name = row.get("itemLabel", {}).get("value", "")
+        gkz = row.get("gkz", {}).get("value", "")
         website = row.get("website", {}).get("value", "")
-        canton = row.get("cantonLabel", {}).get("value", "")
-
-        if bfs not in municipalities:
-            municipalities[bfs] = {
-                "bfs": bfs,
+        
+        if not gkz or not name:
+            continue
+        
+        if gkz not in municipalities:
+            municipalities[gkz] = {
                 "name": name,
+                "gkz": gkz,
                 "website": website,
-                "canton": canton,
+                "federal_state": GKZ_TO_STATE[gkz[0]],
             }
-        elif not municipalities[bfs]["website"] and website:
-            municipalities[bfs]["website"] = website
 
     logger.info(
         "Wikidata: {} municipalities, {} with websites",
@@ -341,8 +352,25 @@ def load_overrides(overrides_path: Path) -> dict[str, dict[str, str]]:
     """Load manual overrides from JSON file."""
     if not overrides_path.exists():
         return {}
-    with open(overrides_path, encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(overrides_path, encoding="utf-8") as f:
+            content = f.read().strip()
+            if not content:
+                return {}
+            return json.loads(content)
+    except (json.JSONDecodeError, IOError) as e:
+        logger.warning("Failed to parse overrides file {}: {}", overrides_path, e)
+        return {}
+
+def load_staedtebund(csv_path: Path) -> pd.DataFrame:
+    """Load Städtebund data from CSV file."""
+    if not csv_path.exists():
+        return pd.DataFrame()
+    try:
+        return pd.read_csv(csv_path)
+    except (pd.errors.EmptyDataError, IOError) as e:
+        logger.warning("Failed to parse CSV file {}: {}", csv_path, e)
+        return pd.DataFrame()
 
 
 def decrypt_typo3(encoded: str, offset: int = 2) -> str:
@@ -538,22 +566,31 @@ async def resolve_municipality_domain(
     """Resolve a municipality's email domain using multiple sources.
 
     1. Override -> immediate win, confidence: high
-    2. Collect from scrape, wikidata, guess sources
-    3. Score agreement to pick best domain
+    2. Städtebund domain -> confidence: high
+    3. Collect from scrape, wikidata, guess sources
+    4. Score agreement to pick best domain
     """
-    bfs = m["bfs"]
+    gkz = m["gkz"]
     name = m["name"]
-    canton = m.get("canton", "")
+    federal_state = m.get("federal_state", "")
 
     entry: dict[str, Any] = {
-        "bfs": bfs,
+        "gkz": gkz,
         "name": name,
-        "canton": canton,
+        "federal_state": federal_state,
+    }
+
+    sources: dict[str, set[str]] = {
+        "staedtebund": set(),
+        "wikidata": set(),
+        "scrape": set(),
+        "redirect": set(),
+        "guess": set(),
     }
 
     # 1. Check overrides (immediate win)
-    if bfs in overrides:
-        override = overrides[bfs]
+    if gkz in overrides:
+        override = overrides[gkz]
         domain = override["domain"]
         mx = await lookup_mx(domain) if domain else []
         entry["domain"] = domain
@@ -563,109 +600,140 @@ async def resolve_municipality_domain(
         entry["flags"] = []
         return entry
 
-    # 2. Collect from multiple sources
-    website_domain = url_to_domain(m.get("website", ""))
-    sources: dict[str, set[str]] = {
-        "scrape": set(),
-        "redirect": set(),
-        "wikidata": set(),
-        "guess": set(),
-    }
+    # 2. Collect from Städtebund domain
+    staedtebund_domain = m.get("domain", "")
+    if staedtebund_domain:
+        if await lookup_mx(staedtebund_domain):
+            sources["staedtebund"].add(staedtebund_domain)
 
-    # Scrape website for email addresses
-    if website_domain:
+        # Scrape website for email addresses
         email_domains, redirect_domain = await scrape_email_domains(
-            client, website_domain
+            client, staedtebund_domain
         )
         for email_domain in email_domains:
-            mx = await lookup_mx(email_domain)
-            if mx:
+            if await lookup_mx(email_domain):
                 sources["scrape"].add(email_domain)
 
         # Add redirect target as a source (if it has MX records)
         if redirect_domain:
-            mx = await lookup_mx(redirect_domain)
-            if mx:
+            if await lookup_mx(redirect_domain):
                 sources["redirect"].add(redirect_domain)
 
-    # Wikidata website domain
-    if website_domain:
-        mx = await lookup_mx(website_domain)
-        if mx:
-            sources["wikidata"].add(website_domain)
+    # 3. Collect from wikidata
+    wikidata_domain = url_to_domain(m.get("website", ""))
+    if wikidata_domain:
+        if await lookup_mx(wikidata_domain):
+            sources["wikidata"].add(wikidata_domain) 
+
+        # Scrape website for email addresses
+        if wikidata_domain:
+            email_domains, redirect_domain = await scrape_email_domains(
+                client, wikidata_domain
+            )
+            for email_domain in email_domains:
+                if await lookup_mx(email_domain):
+                    sources["scrape"].add(email_domain)
+
+            # Add redirect target as a source (if it has MX records)
+            if redirect_domain:
+                if await lookup_mx(redirect_domain):
+                    sources["redirect"].add(redirect_domain)
 
     # Guess domains
-    for guess in guess_domains(name, canton):
-        mx = await lookup_mx(guess)
-        if mx:
+    for guess in guess_domains(name, federal_state):
+        if await lookup_mx(guess):
             sources["guess"].add(guess)
 
     # 3. Score and pick best
-    result = score_domain_sources(sources, name, website_domain or "")
+    result = score_domain_sources(sources, name, wikidata_domain or "")
     entry.update(result)
-
-    # Add bfs_only flag if applicable
-    if m.get("bfs_only"):
-        entry.setdefault("flags", []).append("bfs_only")
 
     return entry
 
 
-async def run(output_path: Path, overrides_path: Path, date: str | None = None) -> None:
+async def run(output_path: Path, overrides_path: Path, staedtebund_csv_path: Path, date: str | None = None) -> None:
+    # 1. Load sources
     overrides = load_overrides(overrides_path)
+    logger.info(f"Loaded {len(overrides)} overrides.")
 
-    # BFS API is the canonical municipality list
-    bfs_municipalities = await fetch_bfs_municipalities(date)
-
-    # Wikidata provides website URLs
+    staedtebund_data = load_staedtebund(staedtebund_csv_path)
+    staedtebund_data["gkz"] = staedtebund_data["gkz"].astype("Int64").astype(str)
+    logger.info(f"Loaded {len(staedtebund_data)} municipalities from Städtebund.")
+    
     wikidata = await fetch_wikidata()
+    logger.info(f"Loaded {len(wikidata)} municipalities from Wikidata.")
 
-    # Merge: for each BFS municipality, attach Wikidata website if available
-    municipalities: dict[str, dict[str, Any]] = {}
-    for bfs, bfs_entry in bfs_municipalities.items():
-        entry: dict[str, Any] = {
-            "bfs": bfs,
-            "name": bfs_entry["name"],
-            "canton": bfs_entry["canton"],
-            "website": "",
-        }
-        if bfs in wikidata:
-            entry["website"] = wikidata[bfs].get("website", "")
-        municipalities[bfs] = entry
-
-    # Log municipalities in BFS but missing from Wikidata
-    bfs_only = set(bfs_municipalities) - set(wikidata)
-    if bfs_only:
+    # 2. Log differences between Städtebund and Wikidata
+    # Municipalities in Städtebund but missing from Wikidata
+    staedtebund_gkz = set(staedtebund_data["gkz"])
+    wikidata_gkz = set(wikidata.keys())
+    staedtebund_only = staedtebund_gkz - wikidata_gkz
+    if staedtebund_only:
         logger.warning(
-            "{} municipalities in BFS but missing from Wikidata", len(bfs_only)
+            "{} municipalities in Städtebund but missing from Wikidata", len(staedtebund_only)
         )
-        for bfs in sorted(bfs_only, key=int):
-            m = bfs_municipalities[bfs]
-            logger.warning("    {:>5}  {}", bfs, m["name"])
-            municipalities[bfs]["bfs_only"] = True
-
-    # Log municipalities in Wikidata but not in BFS (potentially dissolved)
-    wikidata_only = set(wikidata) - set(bfs_municipalities)
+        for gkz in sorted(staedtebund_only, key=int):
+            m = staedtebund_data[staedtebund_data["gkz"] == gkz].iloc[0]
+            logger.info("    {:>5}  {}", gkz, m["municipality_name"])
+    # Municipalities in Wikidata but not in Städtebund (potentially dissolved)
+    wikidata_only = wikidata_gkz - staedtebund_gkz
     if wikidata_only:
         logger.warning(
-            "{} municipalities in Wikidata but missing from BFS", len(wikidata_only)
+            "{} municipalities in Wikidata but missing from Städtebund", len(wikidata_only)
         )
-        for bfs in sorted(wikidata_only, key=int):
-            m = wikidata[bfs]
-            logger.warning("    {:>5}  {}", bfs, m["name"])
+        for gkz in sorted(wikidata_only):
+            m = wikidata[gkz]
+            logger.info("    {:>5}  {}", gkz, m["name"])
 
-    # Add municipalities that are only in overrides (missing from both)
-    for bfs, override in overrides.items():
-        if bfs not in municipalities and "name" in override:
-            municipalities[bfs] = {
-                "bfs": bfs,
-                "name": override["name"],
-                "website": "",
-                "canton": override.get("canton", ""),
+    # 3. Merge sources - Städtebund list is the primary source
+    municipalities: dict[str, dict[str, Any]] = {}
+    for _, row in staedtebund_data.iterrows():
+        name = row["municipality_name"]
+        gkz = str(row["gkz"]) if pd.notna(row["gkz"]) and row["gkz"] else ""
+        federal_state = row["bundesland"]
+        entry: dict[str, Any] = {
+            "name": name,
+            "federal_state": federal_state,
+            "gkz": gkz,
+            "domain": row["domain"],  # Städtebund domain - to be checked later
+        }
+        # if gkz or name+federal_state combo exists in wikidata, use website
+        if gkz in wikidata:
+            entry["website"] = wikidata[gkz].get("website", "")
+        if name in [m["name"] for m in wikidata.values()]:
+            federal_state_match = next((m for m in wikidata.values() if m["name"] == name and m.get("federal_state") == federal_state), None)
+            if federal_state_match:
+                entry["website"] = federal_state_match.get("website", "")
+
+        municipalities[gkz] = entry
+
+    for gkz, entry in wikidata.items():
+        if gkz not in municipalities.keys():
+            name = entry["name"]
+            federal_state = entry.get("federal_state", "")
+            # check if the name+federal state combo already exists in municipalities
+            if any(m["name"] == name and m.get("federal_state") == federal_state for m in municipalities.values()):
+                logger.info("Skipping duplicate municipality: {} (federal state: {})", name, federal_state)
+                continue
+            municipalities[gkz] = {
+                "name": name,
+                "website": entry.get("website", ""),
+                "federal_state": federal_state,
+                "gkz": gkz,
             }
-            logger.info(
-                "Added override-only municipality: {} {}", bfs, override["name"]
-            )
+            logger.info("Added Wikidata-only municipality: {}", name)
+
+    # 4. Add municipalities that are only in overrides
+    for gkz, override in overrides.items():
+        if gkz not in municipalities.keys():
+            municipalities[gkz] = {
+                "name": override["name"],
+                "domain": override.get("domain", ""),
+                "website": override.get("website", ""),
+                "federal_state": override.get("federal_state", ""),
+                "gkz": gkz,
+            }
+            logger.info("Added override-only municipality: {}", override["name"])
 
     total = len(municipalities)
     logger.info("Resolving email domains for {} municipalities", total)
@@ -680,7 +748,7 @@ async def run(output_path: Path, overrides_path: Path, date: str | None = None) 
             try:
                 return await resolve_municipality_domain(m, overrides, shared_client)
             except Exception:
-                logger.exception("Resolution failed for {} ({})", m["name"], m["bfs"])
+                logger.exception("Resolution failed for {}", m["name"])
                 return None
 
     results: dict[str, dict[str, Any]] = {}
@@ -688,7 +756,7 @@ async def run(output_path: Path, overrides_path: Path, date: str | None = None) 
     skipped = 0
 
     async with httpx.AsyncClient(
-        headers={"User-Agent": "mxmap.ch/1.0 (https://github.com/davidhuser/mxmap)"},
+        headers={"User-Agent": "mxmap.at/1.0 (https://github.com/davidhuser/mxmap)"},
         follow_redirects=True,
     ) as shared_client:
         tasks = [
@@ -701,7 +769,7 @@ async def run(output_path: Path, overrides_path: Path, date: str | None = None) 
             if result is None:
                 skipped += 1
                 continue
-            results[result["bfs"]] = result
+            results[result["gkz"]] = result
             done += 1
             counts: dict[str, int] = {}
             for r in results.values():
@@ -711,7 +779,7 @@ async def run(output_path: Path, overrides_path: Path, date: str | None = None) 
                 done,
                 total,
                 result["name"],
-                result["bfs"],
+                result["gkz"],
                 result.get("domain", ""),
                 result.get("source", ""),
                 result.get("confidence", ""),
@@ -731,7 +799,7 @@ async def run(output_path: Path, overrides_path: Path, date: str | None = None) 
 
     logger.info("--- Domain resolution: {} municipalities ---", len(results))
     logger.info("By source:")
-    for source in ["override", "wikidata", "scrape", "redirect", "guess", "none"]:
+    for source in ["override", "staedtebund", "wikidata", "scrape", "redirect", "guess", "none"]:
         logger.info("  {:<12} {:>5}", source, source_counts.get(source, 0))
     logger.info("By confidence:")
     for conf in ["high", "medium", "low", "none"]:
@@ -739,18 +807,18 @@ async def run(output_path: Path, overrides_path: Path, date: str | None = None) 
 
     # Print flagged entries for review (skip overridden — already confirmed)
     unreviewed = {
-        bfs: r for bfs, r in results.items() if bfs not in overrides and r.get("flags")
+        gkz: r for gkz, r in results.items() if gkz not in overrides and r.get("flags")
     }
 
     disagreements = [r for r in unreviewed.values() if "sources_disagree" in r["flags"]]
     if disagreements:
         logger.warning("{} domains with source disagreement:", len(disagreements))
-        for r in sorted(disagreements, key=lambda x: int(x["bfs"])):
+        for r in sorted(disagreements, key=lambda x: int(x["gkz"])):
             logger.warning(
                 "  {:>5}  {:<30} {:<20} domain={}  sources={}",
-                r["bfs"],
+                r["gkz"],
                 r["name"],
-                r["canton"],
+                r["federal_state"],
                 r["domain"],
                 r.get("sources_detail", {}),
             )
@@ -758,46 +826,46 @@ async def run(output_path: Path, overrides_path: Path, date: str | None = None) 
     mismatches = [r for r in unreviewed.values() if "website_mismatch" in r["flags"]]
     if mismatches:
         logger.warning("{} domains with website mismatch:", len(mismatches))
-        for r in sorted(mismatches, key=lambda x: int(x["bfs"])):
+        for r in sorted(mismatches, key=lambda x: int(x["gkz"])):
             logger.warning(
                 "  {:>5}  {:<30} {:<20} domain={}",
-                r["bfs"],
+                r["gkz"],
                 r["name"],
-                r["canton"],
+                r["federal_state"],
                 r["domain"],
             )
 
     guess_only = [r for r in unreviewed.values() if "guess_only" in r["flags"]]
     if guess_only:
         logger.warning("{} domains resolved by guess only:", len(guess_only))
-        for r in sorted(guess_only, key=lambda x: int(x["bfs"])):
+        for r in sorted(guess_only, key=lambda x: int(x["gkz"])):
             logger.warning(
                 "  {:>5}  {:<30} {:<20} domain={}",
-                r["bfs"],
+                r["gkz"],
                 r["name"],
-                r["canton"],
+                r["federal_state"],
                 r["domain"],
             )
 
     # Print low confidence and unresolved entries for review
     low_entries = [
         r
-        for bfs, r in results.items()
-        if bfs not in overrides and r["confidence"] in ("low", "none")
+        for gkz, r in results.items()
+        if gkz not in overrides and r["confidence"] in ("low", "none")
     ]
     if low_entries:
         logger.warning("{} domains needing review:", len(low_entries))
-        for r in sorted(low_entries, key=lambda x: int(x["bfs"])):
+        for r in sorted(low_entries, key=lambda x: int(x["gkz"])):
             logger.warning(
                 "  {:>5}  {:<30} {:<20} domain={}  source={}",
-                r["bfs"],
+                r["gkz"],
                 r["name"],
-                r["canton"],
+                r.get("federal_state", ""),
                 r["domain"] or "(none)",
                 r["source"],
             )
 
-    sorted_results = dict(sorted(results.items(), key=lambda kv: int(kv[0])))
+    sorted_results = dict(sorted(results.items(), key=lambda kv: kv[0]))
 
     output = {
         "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),

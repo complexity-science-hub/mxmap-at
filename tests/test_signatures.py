@@ -4,7 +4,7 @@ from mail_sovereignty.models import Provider
 from mail_sovereignty.signatures import (
     GATEWAY_KEYWORDS,
     SIGNATURES,
-    SWISS_ISP_ASNS,
+    AUSTRIA_ISP_ASNS,
     match_patterns,
 )
 
@@ -45,8 +45,8 @@ class TestMatchPatterns:
 
 
 class TestSignatures:
-    def test_four_providers(self):
-        assert len(SIGNATURES) == 4
+    def test_number_of_providers(self):
+        assert len(SIGNATURES) == 7
 
     def test_providers_covered(self):
         providers = {s.provider for s in SIGNATURES}
@@ -54,7 +54,10 @@ class TestSignatures:
             Provider.MS365,
             Provider.GOOGLE,
             Provider.AWS,
-            Provider.INFOMANIAK,
+            Provider.A1,
+            Provider.GEMDAT,
+            Provider.RIS,
+            Provider.EASYNAME
         }
 
     def test_ms365_has_mx(self):
@@ -74,15 +77,13 @@ class TestSignatures:
         aws = next(s for s in SIGNATURES if s.provider == Provider.AWS)
         assert "amazonaws.com" in aws.mx_patterns
 
-    def test_infomaniak_has_mx(self):
-        infomaniak = next(s for s in SIGNATURES if s.provider == Provider.INFOMANIAK)
-        assert "mxpool.infomaniak.com" in infomaniak.mx_patterns
-        assert "ikmail.com" in infomaniak.mx_patterns
-        assert "mta-gw.infomaniak.ch" in infomaniak.mx_patterns
+    def test_a1_has_mx(self):
+        a1 = next(s for s in SIGNATURES if s.provider == Provider.A1)
+        assert "a1.net" in a1.mx_patterns
 
-    def test_infomaniak_has_spf(self):
-        infomaniak = next(s for s in SIGNATURES if s.provider == Provider.INFOMANIAK)
-        assert "spf.infomaniak.ch" in infomaniak.spf_includes
+    def test_a1_has_spf(self):
+        a1 = next(s for s in SIGNATURES if s.provider == Provider.A1)
+        assert "a1.net" in a1.spf_includes
 
     def test_ms365_dkim_selectors(self):
         ms365 = next(s for s in SIGNATURES if s.provider == Provider.MS365)
@@ -139,13 +140,13 @@ class TestSignatures:
         assert 16509 in aws.asns
         assert 14618 in aws.asns
 
-    def test_infomaniak_asns(self):
-        infomaniak = next(s for s in SIGNATURES if s.provider == Provider.INFOMANIAK)
-        assert 51786 in infomaniak.asns
+    def test_a1_asns(self):
+        a1 = next(s for s in SIGNATURES if s.provider == Provider.A1)
+        assert 8447 in a1.asns
 
-    def test_infomaniak_smtp_banner(self):
-        infomaniak = next(s for s in SIGNATURES if s.provider == Provider.INFOMANIAK)
-        assert "infomaniak" in infomaniak.smtp_banner_patterns
+    def test_a1_smtp_banner(self):
+        a1 = next(s for s in SIGNATURES if s.provider == Provider.A1)
+        assert "a1" in a1.smtp_banner_patterns
 
 
 class TestGatewayKeywords:
@@ -173,15 +174,15 @@ class TestGatewayKeywords:
             assert len(patterns) > 0, f"Gateway {gw} has no patterns"
 
 
-class TestSwissIspAsns:
-    def test_swisscom(self):
-        assert SWISS_ISP_ASNS[3303] == "Swisscom"
+class TestAustrianIspAsns:
+    def test_a1_telekom(self):
+        assert AUSTRIA_ISP_ASNS[8447] == "A1 Telekom Austria"
 
-    def test_switch(self):
-        assert SWISS_ISP_ASNS[559] == "SWITCH"
+    def test_tmobile(self):
+        assert AUSTRIA_ISP_ASNS[8412] == "T-Mobile Austria"
 
-    def test_infomaniak(self):
-        assert SWISS_ISP_ASNS[51786] == "Infomaniak Network SA"
+    def test_tele2(self):
+        assert AUSTRIA_ISP_ASNS[25255] == "TELE2 AUSTRIA"
 
     def test_has_entries(self):
-        assert len(SWISS_ISP_ASNS) > 0
+        assert len(AUSTRIA_ISP_ASNS) > 0

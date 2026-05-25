@@ -121,23 +121,23 @@ class TestProbeMx:
         assert len(results) == 1
         assert results[0].provider == Provider.GOOGLE
 
-    def test_infomaniak_hit(self):
-        results = probe_mx(["mxpool.infomaniak.com"])
+    def test_a1_hit(self):
+        results = probe_mx(["a1.net"])
         assert len(results) == 1
-        assert results[0].provider == Provider.INFOMANIAK
-
+        assert results[0].provider == Provider.A1
+    """
     def test_infomaniak_mta_gw_hit(self):
         results = probe_mx(["mta-gw.infomaniak.ch"])
         assert len(results) == 1
         assert results[0].provider == Provider.INFOMANIAK
-
+    """
     def test_smtp_google_hit(self):
         results = probe_mx(["smtp.google.com"])
         assert len(results) == 1
         assert results[0].provider == Provider.GOOGLE
 
     def test_no_match(self):
-        results = probe_mx(["mx.custom-host.ch"])
+        results = probe_mx(["mx.custom-host.at"])
         assert len(results) == 0
 
     def test_empty_hosts(self):
@@ -169,8 +169,8 @@ class TestProbeSpf:
         assert len(results) == 1
         assert results[0].provider == Provider.GOOGLE
 
-    async def test_infomaniak_hit(self):
-        answer = [_txt_rdata("v=spf1 include:spf.infomaniak.ch ~all")]
+    async def test_a1_hit(self):
+        answer = [_txt_rdata("v=spf1 include:bspf.a1.net ~all")]
         with patch(
             "mail_sovereignty.probes.resolve_robust",
             new_callable=AsyncMock,
@@ -178,7 +178,7 @@ class TestProbeSpf:
         ):
             results = await probe_spf("example.com")
         assert len(results) == 1
-        assert results[0].provider == Provider.INFOMANIAK
+        assert results[0].provider == Provider.A1
 
     async def test_no_spf_record(self):
         answer = [_txt_rdata("google-site-verification=abc123")]
@@ -589,21 +589,21 @@ class TestProbeAsn:
             e.provider == Provider.MS365 and e.kind == SignalKind.ASN for e in results
         )
 
-    async def test_swiss_isp_asn(self):
+    async def test_austria_isp_asn(self):
         async def _resolve(qname, rdtype):
             if rdtype == "A":
-                return [_a_rdata("195.186.1.1")]
+                return [_a_rdata("80.120.17.1")]
             if rdtype == "TXT" and "origin.asn.cymru.com" in qname:
-                return [_txt_rdata("3303 | 195.186.0.0/16 | CH | ripencc | 1999-01-01")]
+                return [_txt_rdata("8447 | 80.120.0.0/16 | AT | ripencc | 2006-09-14")]
             return None
 
         with patch("mail_sovereignty.probes.resolve_robust", side_effect=_resolve):
-            results = await probe_asn(["mx.swisscom.ch"])
+            results = await probe_asn(["mx.a1.net"])
         assert any(
-            e.provider == Provider.SWISS_ISP and e.kind == SignalKind.ASN
+            e.provider == Provider.AUSTRIA_ISP and e.kind == SignalKind.ASN
             for e in results
         )
-        assert any("Swisscom" in e.detail for e in results)
+        assert any("A1" in e.detail for e in results)
 
     async def test_empty_mx_hosts(self):
         results = await probe_asn([])
@@ -670,38 +670,38 @@ class TestProbeTxtVerification:
 
 
 class TestProbeSpfIp:
-    async def test_ip4_swiss_isp(self):
-        """SPF ip4: entry resolving to Swiss ISP ASN produces SPF_IP evidence."""
+    async def test_ip4_austrian_isp(self):
+        """SPF ip4: entry resolving to Austrian ISP ASN produces SPF_IP evidence."""
 
         async def _resolve(qname, rdtype):
             if qname == "example.com" and rdtype == "TXT":
-                return [_txt_rdata("v=spf1 ip4:195.186.1.1 ~all")]
+                return [_txt_rdata("v=spf1 ip4:80.120.17.1 ~all")]
             if rdtype == "TXT" and "origin.asn.cymru.com" in qname:
-                return [_txt_rdata("3303 | 195.186.0.0/16 | CH | ripencc | 1999-01-01")]
+                return [_txt_rdata("8447 | 80.120.0.0/16 | AT | ripencc | 1995-01-01")]
             return None
 
         with patch("mail_sovereignty.probes.resolve_robust", side_effect=_resolve):
             results = await probe_spf_ip("example.com")
         assert any(
-            e.provider == Provider.SWISS_ISP and e.kind == SignalKind.SPF_IP
+            e.provider == Provider.AUSTRIA_ISP and e.kind == SignalKind.SPF_IP
             for e in results
         )
-        assert any("Swisscom" in e.detail for e in results)
+        assert any("A1" in e.detail for e in results)
 
     async def test_ip4_with_cidr(self):
         """ip4: with CIDR notation — uses first IP of the range for ASN lookup."""
 
         async def _resolve(qname, rdtype):
             if qname == "example.com" and rdtype == "TXT":
-                return [_txt_rdata("v=spf1 ip4:195.186.1.0/24 ~all")]
+                return [_txt_rdata("v=spf1 ip4:80.120.0.0/16 ~all")]
             if rdtype == "TXT" and "origin.asn.cymru.com" in qname:
-                return [_txt_rdata("3303 | 195.186.0.0/16 | CH | ripencc | 1999-01-01")]
+                return [_txt_rdata("8447 | 80.120.0.0/16 | AT | ripencc | 1995-01-01")]
             return None
 
         with patch("mail_sovereignty.probes.resolve_robust", side_effect=_resolve):
             results = await probe_spf_ip("example.com")
         assert any(
-            e.provider == Provider.SWISS_ISP and e.kind == SignalKind.SPF_IP
+            e.provider == Provider.AUSTRIA_ISP and e.kind == SignalKind.SPF_IP
             for e in results
         )
 
@@ -710,17 +710,17 @@ class TestProbeSpfIp:
 
         async def _resolve(qname, rdtype):
             if qname == "example.com" and rdtype == "TXT":
-                return [_txt_rdata("v=spf1 a:mail.example.ch ~all")]
-            if qname == "mail.example.ch" and rdtype == "A":
-                return [_a_rdata("195.186.1.1")]
+                return [_txt_rdata("v=spf1 a:mail.example.at ~all")]
+            if qname == "mail.example.at" and rdtype == "A":
+                return [_a_rdata("80.120.0.0")]
             if rdtype == "TXT" and "origin.asn.cymru.com" in qname:
-                return [_txt_rdata("3303 | 195.186.0.0/16 | CH | ripencc | 1999-01-01")]
+                return [_txt_rdata("8447 | 80.120.0.0/16 | AT | ripencc | 1995-01-01")]
             return None
 
         with patch("mail_sovereignty.probes.resolve_robust", side_effect=_resolve):
             results = await probe_spf_ip("example.com")
         assert any(
-            e.provider == Provider.SWISS_ISP and e.kind == SignalKind.SPF_IP
+            e.provider == Provider.AUSTRIA_ISP and e.kind == SignalKind.SPF_IP
             for e in results
         )
 
@@ -770,13 +770,13 @@ class TestProbeSpfIp:
             if qname == "example.com" and rdtype == "TXT":
                 return [_txt_rdata("v=spf1 ip4:195.186.1.1 ip4:195.186.2.2 ~all")]
             if rdtype == "TXT" and "origin.asn.cymru.com" in qname:
-                return [_txt_rdata("3303 | 195.186.0.0/16 | CH | ripencc | 1999-01-01")]
+                return [_txt_rdata("8447 | 80.120.0.0/16 | AT | ripencc | 1995-01-01")]
             return None
 
         with patch("mail_sovereignty.probes.resolve_robust", side_effect=_resolve):
             results = await probe_spf_ip("example.com")
-        swiss_isp_results = [e for e in results if e.provider == Provider.SWISS_ISP]
-        assert len(swiss_isp_results) == 1
+        austrian_isp_results = [e for e in results if e.provider == Provider.AUSTRIA_ISP]
+        assert len(austrian_isp_results) == 1
 
 
 class TestProbeTenantRetry:

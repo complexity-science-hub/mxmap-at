@@ -16,8 +16,8 @@ class TestProvider:
         assert Provider.MS365 == "ms365"
         assert Provider.GOOGLE == "google"
         assert Provider.AWS == "aws"
-        assert Provider.INFOMANIAK == "infomaniak"
-        assert Provider.SWISS_ISP == "swiss-isp"
+        assert Provider.A1 == "a1"
+        assert Provider.AUSTRIA_ISP == "austria_isp"
         assert Provider.INDEPENDENT == "independent"
 
     def test_str_serialization(self):
@@ -29,8 +29,11 @@ class TestProvider:
             Provider.MS365,
             Provider.GOOGLE,
             Provider.AWS,
-            Provider.INFOMANIAK,
-            Provider.SWISS_ISP,
+            Provider.A1,
+            Provider.GEMDAT,
+            Provider.RIS,
+            Provider.EASYNAME,
+            Provider.AUSTRIA_ISP,
             Provider.INDEPENDENT,
         }
 

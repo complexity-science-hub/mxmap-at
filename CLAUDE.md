@@ -1,12 +1,15 @@
 # CLAUDE.md
 
-MXmap (mxmap.ch) — an automated system that classifies where ~2100 Swiss municipalities host their email by fingerprinting DNS records and network infrastructure. Results are displayed on an interactive Leaflet map.
+MXmap is an automated system that classifies where ~2100 Austrian municipalities host their email by fingerprinting DNS records and network infrastructure. Results are displayed on an interactive Leaflet map.
 
 ## Commands
 
 ```bash
 # Setup
 uv sync --group dev
+
+# Extract Austria municipalities (one-time)
+uv run extract-austria-municipalities
 
 # Run pipeline (two stages, in order)
 uv run resolve-domains          # Stage 1: resolve municipality domains

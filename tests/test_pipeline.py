@@ -54,10 +54,10 @@ class TestSerializeResult:
             mx_hosts=["example.mail.protection.outlook.com"],
             spf_raw="v=spf1 include:spf.protection.outlook.com -all",
         )
-        entry = {"bfs": "351", "name": "Bern", "canton": "Bern", "domain": "bern.ch"}
+        entry = {"gkz": "351", "name": "Eisenstadt", "federal_state": "Burgenland", "domain": "eisenstadt.at"}
         out = _serialize_result(entry, result)
 
-        assert out["bfs"] == "351"
+        assert out["gkz"] == "351"
         assert out["provider"] == "microsoft"
         assert out["category"] == "us-cloud"
         assert out["classification_confidence"] == 40.0
@@ -75,7 +75,7 @@ class TestSerializeResult:
             gateway="seppmail",
             mx_hosts=[],
         )
-        entry = {"bfs": "1", "name": "Test", "domain": "test.ch"}
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
         out = _serialize_result(entry, result)
         assert out["gateway"] == "seppmail"
 
@@ -86,7 +86,7 @@ class TestSerializeResult:
             evidence=[],
             mx_hosts=[],
         )
-        entry = {"bfs": "1", "name": "Test", "domain": "test.ch"}
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
         out = _serialize_result(entry, result)
         assert "gateway" not in out
 
@@ -98,15 +98,15 @@ class TestSerializeResult:
             mx_hosts=[],
         )
         entry = {
-            "bfs": "1",
+            "gkz": "1",
             "name": "Test",
-            "domain": "test.ch",
-            "sources_detail": {"scrape": ["test.ch"]},
-            "flags": ["bfs_only"],
+            "domain": "test.at",
+            "sources_detail": {"scrape": ["test.at"]},
+            "flags": ["gkz_only"],
         }
         out = _serialize_result(entry, result)
-        assert out["sources_detail"] == {"scrape": ["test.ch"]}
-        assert out["resolve_flags"] == ["bfs_only"]
+        assert out["sources_detail"] == {"scrape": ["test.at"]}
+        assert out["resolve_flags"] == ["gkz_only"]
 
 
 class TestPipelineRun:
@@ -115,15 +115,15 @@ class TestPipelineRun:
         data = {
             "municipalities": {
                 "351": {
-                    "bfs": "351",
-                    "name": "Bern",
-                    "canton": "Bern",
-                    "domain": "bern.ch",
+                    "gkz": "351",
+                    "name": "Eisenstadt",
+                    "federal_state": "Burgenland",
+                    "domain": "eisenstadt.at",
                 },
                 "9999": {
-                    "bfs": "9999",
+                    "gkz": "9999",
                     "name": "Testingen",
-                    "canton": "Testland",
+                    "federal_state": "Testland",
                     "domain": "",
                 },
             }
@@ -142,10 +142,10 @@ class TestPipelineRun:
                     provider=Provider.MS365,
                     weight=WEIGHTS[SignalKind.MX],
                     detail="MX match",
-                    raw="bern-ch.mail.protection.outlook.com",
+                    raw="eisenstadt-at.mail.protection.outlook.com",
                 ),
             ],
-            mx_hosts=["bern-ch.mail.protection.outlook.com"],
+            mx_hosts=["eisenstadt-at.mail.protection.outlook.com"],
         )
 
         async def fake_classify_many(domains, max_concurrency=20):
@@ -196,12 +196,12 @@ class TestPipelineRun:
         data = {
             "municipalities": {
                 "100": {
-                    "bfs": "100",
+                    "gkz": "100",
                     "name": "Town",
-                    "canton": "ZH",
-                    "domain": "town.ch",
-                    "sources_detail": {"scrape": ["town.ch"]},
-                    "flags": ["bfs_only"],
+                    "federal_state": "Burgenland",
+                    "domain": "town.at",
+                    "sources_detail": {"scrape": ["town.at"]},
+                    "flags": ["gkz_only"],
                 },
             }
         }
@@ -227,8 +227,8 @@ class TestPipelineRun:
 
         out = json.loads(output_path.read_text())
         entry = out["municipalities"]["100"]
-        assert entry["sources_detail"] == {"scrape": ["town.ch"]}
-        assert entry["resolve_flags"] == ["bfs_only"]
+        assert entry["sources_detail"] == {"scrape": ["town.at"]}
+        assert entry["resolve_flags"] == ["gkz_only"]
 
     async def test_run_counts_in_output(self, domains_json, tmp_path):
         result = ClassificationResult(
@@ -263,10 +263,10 @@ class TestPipelineRun:
                     provider=Provider.MS365,
                     weight=WEIGHTS[SignalKind.MX],
                     detail="MX match",
-                    raw="bern-ch.mail.protection.outlook.com",
+                    raw="eisenstadt-at.mail.protection.outlook.com",
                 ),
             ],
-            mx_hosts=["bern-ch.mail.protection.outlook.com"],
+            mx_hosts=["eisenstadt-at.mail.protection.outlook.com"],
         )
 
         async def fake_classify_many(domains, max_concurrency=20):
@@ -302,11 +302,11 @@ class TestMinifyForFrontend:
             "counts": {"microsoft": 1},
             "municipalities": {
                 "351": {
-                    "bfs": "351",
-                    "name": "Bern",
-                    "canton": "Bern",
-                    "domain": "bern.ch",
-                    "mx": ["bern-ch.mail.protection.outlook.com"],
+                    "gkz": "351",
+                    "name": "Eisenstadt",
+                    "federal_state": "Burgenland",
+                    "domain": "eisenstadt.at",
+                    "mx": ["eisenstadt-at.mail.protection.outlook.com"],
                     "spf": "v=spf1 include:spf.protection.outlook.com -all",
                     "provider": "microsoft",
                     "category": "us-cloud",
@@ -320,8 +320,8 @@ class TestMinifyForFrontend:
                         },
                     ],
                     "gateway": "seppmail",
-                    "sources_detail": {"scrape": ["bern.ch"]},
-                    "resolve_flags": ["bfs_only"],
+                    "sources_detail": {"scrape": ["eisenstadt.at"]},
+                    "resolve_flags": ["gkz_only"],
                 }
             },
         }
@@ -331,7 +331,7 @@ class TestMinifyForFrontend:
         mini = _minify_for_frontend(full)
 
         entry = mini["municipalities"]["351"]
-        assert "bfs" not in entry
+        assert "gkz" not in entry
         assert "sources_detail" not in entry
         assert "resolve_flags" not in entry
 
@@ -350,9 +350,9 @@ class TestMinifyForFrontend:
 
         assert mini["generated"] == "2026-01-01T00:00:00Z"
         entry = mini["municipalities"]["351"]
-        assert entry["name"] == "Bern"
-        assert entry["domain"] == "bern.ch"
-        assert entry["mx"] == ["bern-ch.mail.protection.outlook.com"]
+        assert entry["name"] == "Eisenstadt"
+        assert entry["domain"] == "eisenstadt.at"
+        assert entry["mx"] == ["eisenstadt-at.mail.protection.outlook.com"]
         assert entry["spf"] == "v=spf1 include:spf.protection.outlook.com -all"
         assert entry["provider"] == "microsoft"
         assert entry["category"] == "us-cloud"
@@ -370,10 +370,10 @@ class TestPipelineLogging:
         data = {
             "municipalities": {
                 "351": {
-                    "bfs": "351",
-                    "name": "Bern",
-                    "canton": "Bern",
-                    "domain": "bern.ch",
+                    "gkz": "351",
+                    "name": "Eisenstadt",
+                    "federal_state": "Burgenland",
+                    "domain": "eisenstadt.at",
                 },
             }
         }

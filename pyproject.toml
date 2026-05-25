@@ -9,14 +9,18 @@ description = "Interactive map showing where Swiss municipalities host their ema
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "beautifulsoup4>=4.14.3",
     "dnspython>=2.8.0",
     "httpx>=0.28.1",
     "loguru>=0.7.3",
+    "pandas>=3.0.2",
+    "pdfplumber>=0.11.9",
     "pydantic>=2.0",
     "stamina>=25.2.0",
 ]
 
 [project.scripts]
+extract-austria-municipalities = "mail_sovereignty.cli:extract_austria_municipalities"
 resolve-domains = "mail_sovereignty.cli:resolve_domains"
 classify-providers = "mail_sovereignty.cli:classify_providers"
 analyze = "mail_sovereignty.cli:analyze"

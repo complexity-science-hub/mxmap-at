@@ -186,7 +186,7 @@ class TestAggregate:
     def test_gateway_dkim_beats_spf_from_dns_host(self):
         """Behind a gateway, DKIM provider wins over SPF-only provider."""
         evidence = [
-            _ev(SignalKind.SPF, Provider.INFOMANIAK),
+            _ev(SignalKind.SPF, Provider.A1),
             _ev(SignalKind.DKIM, Provider.MS365),
             _ev(SignalKind.TENANT, Provider.MS365),
         ]
@@ -196,11 +196,11 @@ class TestAggregate:
     def test_no_dkim_boost_without_gateway(self):
         """Without gateway, SPF still beats DKIM (normal precedence)."""
         evidence = [
-            _ev(SignalKind.SPF, Provider.INFOMANIAK),
+            _ev(SignalKind.SPF, Provider.A1),
             _ev(SignalKind.DKIM, Provider.MS365),
         ]
         result, _ = _aggregate(evidence)
-        assert result.provider == Provider.INFOMANIAK
+        assert result.provider == Provider.A1
 
     def test_confidence_capped_at_1(self):
         evidence = [_ev(kind, Provider.MS365) for kind in SignalKind]
@@ -322,18 +322,18 @@ class TestAggregate:
         # MX-only rule (0.80) + ASN boost (0.02) = 0.82
         assert result.confidence == pytest.approx(0.82)
 
-    def test_infomaniak_classification(self):
+    def test_a1_classification(self):
         evidence = [
-            _ev(SignalKind.MX, Provider.INFOMANIAK),
-            _ev(SignalKind.SPF, Provider.INFOMANIAK),
+            _ev(SignalKind.MX, Provider.A1),
+            _ev(SignalKind.SPF, Provider.A1),
         ]
         result, _ = _aggregate(evidence)
-        assert result.provider == Provider.INFOMANIAK
+        assert result.provider == Provider.A1
 
-    def test_swiss_isp_spf_ip_alone_no_winner(self):
+    def test_isp_spf_ip_alone_no_winner(self):
         """SPF_IP alone cannot pick a winner (not primary)."""
         evidence = [
-            _ev(SignalKind.SPF_IP, Provider.SWISS_ISP),
+            _ev(SignalKind.SPF_IP, Provider.AUSTRIA_ISP),
         ]
         result, _ = _aggregate(evidence)
         assert result.provider == Provider.INDEPENDENT
@@ -690,14 +690,14 @@ class TestAggregate:
         assert result.confidence == pytest.approx(0.42)
 
     def test_gateway_dkim_tenant_anniviers_scenario(self):
-        """Anniviers: SPF(Infomaniak) + DKIM(MS365) + TENANT(MS365) behind proofpoint."""
+        """Anniviers: SPF(A1) + DKIM(MS365) + TENANT(MS365) behind proofpoint."""
         evidence = [
-            _ev(SignalKind.SPF, Provider.INFOMANIAK),
+            _ev(SignalKind.SPF, Provider.A1),
             _ev(SignalKind.DKIM, Provider.MS365),
             _ev(SignalKind.TENANT, Provider.MS365),
         ]
         result, rule = _aggregate(evidence, gateway="proofpoint")
-        # Gateway DKIM boost: MS365 DKIM 0.15 + 0.06 = 0.21 > Infomaniak SPF 0.20
+        # Gateway DKIM boost: MS365 DKIM 0.15 + 0.06 = 0.21 > A1 SPF 0.20
         assert result.provider == Provider.MS365
         assert rule == "dkim_tenant_gw"
         assert result.confidence == pytest.approx(0.85)
@@ -805,20 +805,20 @@ class TestClassify:
         assert result.provider == Provider.MS365
         assert result.gateway == "seppmail"
 
-    async def test_infomaniak_scenario(self):
+    async def test_a1_scenario(self):
         mx_ev = [
             Evidence(
                 kind=SignalKind.MX,
-                provider=Provider.INFOMANIAK,
+                provider=Provider.A1,
                 weight=WEIGHTS[SignalKind.MX],
                 detail="MX match",
-                raw="mxpool.infomaniak.com",
+                raw="a1.net",
             )
         ]
         spf_ev = [
             Evidence(
                 kind=SignalKind.SPF,
-                provider=Provider.INFOMANIAK,
+                provider=Provider.A1,
                 weight=WEIGHTS[SignalKind.SPF],
                 detail="SPF match",
                 raw="v=spf1",
@@ -828,17 +828,17 @@ class TestClassify:
         with _patch_all_probes(probe_mx=mx_ev, probe_spf=spf_ev):
             result = await classify("example.com")
 
-        assert result.provider == Provider.INFOMANIAK
+        assert result.provider == Provider.A1
 
-    async def test_swiss_isp_scenario(self):
-        """Swiss ISP detected via SPF_IP alone → INDEPENDENT (confirmation-only)."""
+    async def test_austria_isp_scenario(self):
+        """Austria ISP detected via SPF_IP alone → INDEPENDENT (confirmation-only)."""
         spf_ip_ev = [
             Evidence(
                 kind=SignalKind.SPF_IP,
-                provider=Provider.SWISS_ISP,
+                provider=Provider.AUSTRIA_ISP,
                 weight=WEIGHTS[SignalKind.SPF_IP],
-                detail="SPF ip4/a ASN 3303 is Swiss ISP: Swisscom",
-                raw="195.186.1.1:3303",
+                detail="ASN 8447 is Austrian ISP: A1 Telekom Austria",
+                raw="80.120.0.0/16",
             )
         ]
 
@@ -848,14 +848,14 @@ class TestClassify:
         assert result.provider == Provider.INDEPENDENT
 
     async def test_tenant_confirmation_only_in_classify(self):
-        """Domain with Swiss ISP SPF IPs + positive M365 tenant → both confirmation-only, both discarded → INDEPENDENT."""
+        """Domain with Austria ISP SPF IPs + positive M365 tenant → both confirmation-only, both discarded → INDEPENDENT."""
         spf_ip_ev = [
             Evidence(
                 kind=SignalKind.SPF_IP,
-                provider=Provider.SWISS_ISP,
+                provider=Provider.AUSTRIA_ISP,
                 weight=WEIGHTS[SignalKind.SPF_IP],
-                detail="SPF ip4/a ASN 3303 is Swiss ISP: Swisscom",
-                raw="195.186.1.1:3303",
+                detail="ASN 8447 is Austrian ISP: A1 Telekom Austria",
+                raw="80.120.0.0/16",
             )
         ]
         tenant_ev = [

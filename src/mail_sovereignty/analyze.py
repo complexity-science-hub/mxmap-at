@@ -9,7 +9,6 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from .constants import CANTON_ABBREVIATIONS
 from .pipeline import _CATEGORY_MAP
 
 # ---------------------------------------------------------------------------
@@ -95,16 +94,9 @@ def load_data(path: Path) -> dict[str, Any]:
 # Helpers
 # ---------------------------------------------------------------------------
 
-_CANTON_LOOKUP = {k: v.upper() for k, v in CANTON_ABBREVIATIONS.items()}
-
-_PROVIDERS_ORDERED = ["microsoft", "google", "aws", "infomaniak", "independent"]
+_PROVIDERS_ORDERED = ["microsoft", "google", "aws", "independent", "a1", "gemdat", "ris", "easyname"]
 
 _PRIMARY_SIGNAL_KINDS = {"mx", "spf", "dkim", "autodiscover"}
-
-
-def _canton_abbr(canton: str) -> str:
-    return _CANTON_LOOKUP.get(canton, "??")
-
 
 def _category(provider: str) -> str:
     return _CATEGORY_MAP.get(provider, "unknown")
@@ -131,10 +123,10 @@ def report_overall_summary(data: dict[str, Any], munis: dict[str, Any]) -> None:
     print()
     print(f"  {'Category':<16} {'Count':>6}  {'%':>6}  Bar")
     _sep()
-    for cat in ["us-cloud", "swiss-based"]:
+    for cat in ["us-cloud", "austrian-based"]:
         cnt = cat_counts[cat]
         color = _red if cat == "us-cloud" else _green
-        label = "US Cloud" if cat == "us-cloud" else "Swiss Based"
+        label = "US Cloud" if cat == "us-cloud" else "Austrian Based"
         print(
             f"  {color(f'{label:<16}')} {cnt:>6,}  {_pct(cnt, total)}  "
             f"{color(_bar(cnt, total))}"
@@ -158,21 +150,21 @@ def report_overall_summary(data: dict[str, Any], munis: dict[str, Any]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# 2. Cantonal Breakdown
+# 2. Federal State Breakdown
 # ---------------------------------------------------------------------------
 
 
-def report_cantonal(munis: dict[str, Any]) -> None:
-    _header("CANTONAL BREAKDOWN (sorted by US-Cloud %)")
+def report_federal_states(munis: dict[str, Any]) -> None:
+    _header("FEDERAL STATE BREAKDOWN (sorted by US-Cloud %)")
 
-    # Group by canton
-    by_canton: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    # Group by federal state
+    by_federal_state: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for m in munis.values():
-        by_canton[_canton_abbr(m.get("canton", ""))].append(m)
+        by_federal_state[m.get("federal_state", "")].append(m)
 
     # Build rows
     rows: list[tuple[str, int, dict[str, int], float]] = []
-    for abbr, entries in by_canton.items():
+    for state, entries in by_federal_state.items():
         total = len(entries)
         prov_counts: Counter[str] = Counter(e["provider"] for e in entries)
         us_cloud = sum(
@@ -181,31 +173,34 @@ def report_cantonal(munis: dict[str, Any]) -> None:
             if _category(p) == "us-cloud"
         )
         us_pct = us_cloud / total * 100 if total else 0
-        rows.append((abbr, total, dict(prov_counts), us_pct))
+        rows.append((state, total, dict(prov_counts), us_pct))
 
     rows.sort(key=lambda r: r[3], reverse=True)
 
     hdr = (
-        f"  {'Canton':<8}{'Total':>5}"
+        f"  {'Federal State':<15}{'Total':>5}"
         f"{'MSFT':>6}{'Goog':>6}{'AWS':>5}"
-        f"{'Info':>6}{'Indep':>6}"
-        f"  {'US%':>6}  {'Swiss%':>6}"
+        f"{'A1':>6}{'Gemdat':>6}{'RIS':>5}{'Easyname':>8}{'Indep':>6}"
+        f"  {'US%':>6}  {'Austrian%':>6}"
     )
     print(hdr)
     _sep()
 
-    for abbr, total, pc, us_pct in rows:
-        swiss_pct = 100 - us_pct
+    for state, total, pc, us_pct in rows:
+        austrian_pct = 100 - us_pct
         color = _red if us_pct >= 70 else (_yellow if us_pct >= 50 else _green)
         print(
-            f"  {abbr:<8}{total:>5}"
+            f"  {state:<15}{total:>5}"
             f"{pc.get('microsoft', 0):>6}"
             f"{pc.get('google', 0):>6}"
             f"{pc.get('aws', 0):>5}"
-            f"{pc.get('infomaniak', 0):>6}"
+            f"{pc.get('a1', 0):>6}"
+            f"{pc.get('gemdat', 0):>6}"
+            f"{pc.get('ris', 0):>5}"
+            f"{pc.get('easyname', 0):>8}"
             f"{pc.get('independent', 0):>6}"
             f"  {color(f'{us_pct:5.1f}%')}"
-            f"  {f'{swiss_pct:5.1f}%':>6}"
+            f"  {f'{austrian_pct:5.1f}%':>6}"
         )
 
 
@@ -299,13 +294,13 @@ def report_signals(munis: dict[str, Any]) -> None:
     print(f"\n  Single-signal municipalities: {_yellow(str(len(single_signal)))}")
     for m in single_signal[:5]:
         sig = m["classification_signals"][0]
-        print(f"    {m['bfs']:>5}  {m['name']:<30} {sig['kind']}:{sig['provider']}")
+        print(f"    {m['gkz']:>5}  {m['name']:<30} {sig['kind']}:{sig['provider']}")
     if len(single_signal) > 5:
         print(f"    {_dim(f'... and {len(single_signal) - 5} more')}")
 
     print(f"\n  Zero-signal municipalities: {_yellow(str(len(zero_signal)))}")
     for m in zero_signal[:5]:
-        print(f"    {m['bfs']:>5}  {m['name']:<30} provider={m['provider']}")
+        print(f"    {m['gkz']:>5}  {m['name']:<30} provider={m['provider']}")
     if len(zero_signal) > 5:
         print(f"    {_dim(f'... and {len(zero_signal) - 5} more')}")
 
@@ -394,7 +389,7 @@ def report_low_confidence(munis: dict[str, Any]) -> None:
     if low:
         print()
         print(
-            f"  {'BFS':>5}  {'Name':<28} {'Canton':<6} {'Provider':<14} "
+            f"  {'gkz':>5}  {'Name':<28} {'Federal State':<15} {'Provider':<14} "
             f"{'Conf':>5}  Signals"
         )
         _sep()
@@ -403,8 +398,8 @@ def report_low_confidence(munis: dict[str, Any]) -> None:
                 sorted({s["kind"] for s in m.get("classification_signals", [])})
             )
             print(
-                f"  {m['bfs']:>5}  {m['name']:<28} "
-                f"{_canton_abbr(m.get('canton', '')):>4}  "
+                f"  {m['gkz']:>5}  {m['name']:<28} "
+                f"{m.get('federal_state', ''):<15}  "
                 f"{m['provider']:<14} "
                 f"{m['classification_confidence']:>4.0f}%  {signals}"
             )
@@ -428,11 +423,11 @@ def report_low_confidence(munis: dict[str, Any]) -> None:
     if conflicts:
         conflicts.sort(key=lambda x: len(x[2]), reverse=True)
         print()
-        print(f"  {'BFS':>5}  {'Name':<28} {'Winner':<14} {'Conflict':>14}  Signals")
+        print(f"  {'gkz':>5}  {'Name':<28} {'Winner':<14} {'Conflict':>14}  Signals")
         _sep()
         for m, other, kinds in conflicts[:20]:
             print(
-                f"  {m['bfs']:>5}  {m['name']:<28} {m['provider']:<14} "
+                f"  {m['gkz']:>5}  {m['name']:<28} {m['provider']:<14} "
                 f"{other:>14}  {'+'.join(sorted(kinds))}"
             )
         if len(conflicts) > 20:
@@ -445,11 +440,11 @@ def report_low_confidence(munis: dict[str, Any]) -> None:
 
 
 def main() -> None:
-    data = load_data(Path("data.json"))
+    data = load_data(Path("data/data.json"))
     munis = data["municipalities"]
 
     report_overall_summary(data, munis)
-    report_cantonal(munis)
+    report_federal_states(munis)
     report_confidence(munis)
     report_signals(munis)
     report_gateways(munis)

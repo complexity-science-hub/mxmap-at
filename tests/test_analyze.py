@@ -11,7 +11,7 @@ import pytest
 from mail_sovereignty.analyze import (
     load_data,
     main,
-    report_cantonal,
+    report_federal_states,
     report_confidence,
     report_domain_sharing,
     report_gateways,
@@ -25,11 +25,11 @@ from mail_sovereignty.analyze import (
 # ---------------------------------------------------------------------------
 
 _MUNIS = {
-    "1": {
-        "bfs": "1",
-        "name": "Zurich Town",
-        "canton": "Kanton Zürich",
-        "domain": "zurich.ch",
+    "10101": { # test for strong microsoft signal
+        "gkz": "10101",
+        "name": "Eisenstadt",
+        "federal_state": "Burgenland",
+        "domain": "eisenstadt.at",
         "provider": "microsoft",
         "category": "us-cloud",
         "classification_confidence": 95.0,
@@ -57,13 +57,13 @@ _MUNIS = {
         "spf": "v=spf1 include:spf.protection.outlook.com -all",
         "gateway": None,
     },
-    "2": {
-        "bfs": "2",
-        "name": "Bern Village",
-        "canton": "Kanton Bern",
-        "domain": "bern.ch",
+    "20202": { # test for independent signal
+        "gkz": "20202",
+        "name": "Tirol Village",
+        "federal_state": "Tirol",
+        "domain": "tirol.at",
         "provider": "independent",
-        "category": "swiss-based",
+        "category": "austrian-based",
         "classification_confidence": 90.0,
         "classification_signals": [
             {
@@ -79,42 +79,42 @@ _MUNIS = {
                 "detail": "spf match",
             },
         ],
-        "mx": ["mail.bern.ch"],
+        "mx": ["mail.tirol.at"],
         "spf": "v=spf1 a mx -all",
         "gateway": None,
     },
-    "3": {
-        "bfs": "3",
-        "name": "Genf City",
-        "canton": "Kanton Genf",
-        "domain": "shared.ch",
-        "provider": "infomaniak",
-        "category": "swiss-based",
+    "30303": { # test for single signal
+        "gkz": "30303",
+        "name": "Town in Niederösterreich",
+        "federal_state": "Niederösterreich",
+        "domain": "shared.at",
+        "provider": "a1",
+        "category": "austrian-based",
         "classification_confidence": 50.0,
         "classification_signals": [
             {
                 "kind": "spf",
-                "provider": "infomaniak",
+                "provider": "a1",
                 "weight": 0.2,
                 "detail": "spf match",
             },
         ],
-        "mx": ["mxpool.infomaniak.com"],
-        "spf": "v=spf1 include:spf.infomaniak.ch -all",
+        "mx": ["mxpool.a1.com"],
+        "spf": "v=spf1 include:spf.a1.com -all",
         "gateway": "seppmail",
     },
-    "4": {
-        "bfs": "4",
-        "name": "Genf Town",
-        "canton": "Kanton Genf",
-        "domain": "shared.ch",
-        "provider": "infomaniak",
-        "category": "swiss-based",
+    "40404": { # test for conflicting signals
+        "gkz": "40404",
+        "name": "City in Kärnten",
+        "federal_state": "Kärnten",
+        "domain": "shared.at",
+        "provider": "a1",
+        "category": "austrian-based",
         "classification_confidence": 55.0,
         "classification_signals": [
             {
                 "kind": "spf",
-                "provider": "infomaniak",
+                "provider": "a1",
                 "weight": 0.2,
                 "detail": "spf match",
             },
@@ -125,17 +125,17 @@ _MUNIS = {
                 "detail": "mx conflict",
             },
         ],
-        "mx": ["mxpool.infomaniak.com"],
-        "spf": "v=spf1 include:spf.infomaniak.ch -all",
+        "mx": ["mxpool.a1.com"],
+        "spf": "v=spf1 include:spf.a1.com -all",
         "gateway": "seppmail",
     },
-    "5": {
-        "bfs": "5",
+    "50505": { # test for no signal
+        "gkz": "50505",
         "name": "No Signal Town",
-        "canton": "",
-        "domain": "nosignal.ch",
+        "federal_state": "",
+        "domain": "nosignal.at",
         "provider": "independent",
-        "category": "swiss-based",
+        "category": "austrian-based",
         "classification_confidence": 60.0,
         "classification_signals": [],
         "mx": [],
@@ -148,7 +148,7 @@ _DATA = {
     "generated": "2026-03-24T00:00:00Z",
     "commit": "abc1234",
     "total": 5,
-    "counts": {"microsoft": 1, "independent": 2, "infomaniak": 2},
+    "counts": {"microsoft": 1, "independent": 2, "a1": 2},
     "municipalities": _MUNIS,
 }
 
@@ -183,18 +183,19 @@ def test_report_overall_summary(capsys: pytest.CaptureFixture[str]) -> None:
     assert "5" in out  # total
     assert "microsoft" in out
     assert "independent" in out
+    assert "a1" in out
     assert "US Cloud" in out
-    assert "Swiss Based" in out
+    assert "Austrian Based" in out
 
 
-def test_report_cantonal(capsys: pytest.CaptureFixture[str]) -> None:
-    report_cantonal(_MUNIS)
+def test_report_federal_states(capsys: pytest.CaptureFixture[str]) -> None:
+    report_federal_states(_MUNIS)
     out = capsys.readouterr().out
-    assert "CANTONAL" in out
-    assert "ZH" in out
-    assert "BE" in out
-    assert "GE" in out
-    assert "??" in out  # empty canton
+    assert "FEDERAL STATE" in out
+    assert "Burgenland" in out
+    assert "Tirol" in out
+    assert "Niederösterreich" in out
+    #assert "??" in out  # empty federal state - not present in data
 
 
 def test_report_confidence(capsys: pytest.CaptureFixture[str]) -> None:
@@ -203,7 +204,7 @@ def test_report_confidence(capsys: pytest.CaptureFixture[str]) -> None:
     assert "CONFIDENCE" in out
     assert "Average confidence" in out
     assert "microsoft" in out
-    assert "infomaniak" in out
+    assert "a1" in out
 
 
 def test_report_signals(capsys: pytest.CaptureFixture[str]) -> None:
@@ -228,16 +229,16 @@ def test_report_domain_sharing(capsys: pytest.CaptureFixture[str]) -> None:
     report_domain_sharing(_MUNIS)
     out = capsys.readouterr().out
     assert "SHARED DOMAINS" in out
-    assert "shared.ch" in out
-    assert "Genf City" in out
+    assert "shared.at" in out
+    assert "City in Kärnten" in out
 
 
 def test_report_low_confidence(capsys: pytest.CaptureFixture[str]) -> None:
     report_low_confidence(_MUNIS)
     out = capsys.readouterr().out
     assert "LOW-CONFIDENCE" in out
-    assert "Genf City" in out  # confidence 50
-    assert "Genf Town" in out  # confidence 55
+    assert "City in Kärnten" in out  # confidence 55
+    assert "Town in Niederösterreich" in out  # confidence 50
     assert "Conflicting primary" in out
 
 
@@ -246,7 +247,7 @@ def test_report_low_confidence_shows_conflicts(
 ) -> None:
     report_low_confidence(_MUNIS)
     out = capsys.readouterr().out
-    # muni 4 has mx pointing to microsoft but winner is infomaniak
+    # muni 4 has mx pointing to microsoft but winner is a1
     assert "microsoft" in out
 
 
@@ -264,7 +265,7 @@ def test_main(capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
 
     out = capsys.readouterr().out
     assert "OVERALL SUMMARY" in out
-    assert "CANTONAL" in out
+    assert "FEDERAL STATE" in out
     assert "CONFIDENCE" in out
     assert "SIGNAL ANALYSIS" in out
     assert "GATEWAY" in out

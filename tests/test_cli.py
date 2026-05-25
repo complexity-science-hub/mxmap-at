@@ -29,11 +29,12 @@ class TestCli:
         ):
             resolve_domains()
             mock_run.assert_called_once_with(
-                Path("municipality_domains.json"),
-                Path("overrides.json"),
+                Path("data/municipality_domains.json"),
+                Path("data/overrides.json"),
+                Path("data/municipalities_gv_at.csv"),
                 date=None,
             )
-
+    """ # date was used for bfs api -> not used anymore
     def test_resolve_domains_with_date(self):
         with (
             patch("mail_sovereignty.resolve.run", new_callable=AsyncMock) as mock_run,
@@ -45,7 +46,7 @@ class TestCli:
                 Path("overrides.json"),
                 date="15-03-2026",
             )
-
+    """
     def test_resolve_domains_verbose(self):
         with (
             patch("mail_sovereignty.resolve.run", new_callable=AsyncMock),
@@ -60,7 +61,7 @@ class TestCli:
         ):
             classify_providers()
             mock_run.assert_called_once_with(
-                Path("municipality_domains.json"), Path("data.json")
+                Path("data/municipality_domains.json"), Path("data/data.json")
             )
 
     def test_classify_providers_verbose(self):

@@ -11,9 +11,13 @@ class Provider(str, enum.Enum):
     MS365 = "ms365"
     GOOGLE = "google"
     AWS = "aws"
-    INFOMANIAK = "infomaniak"
-    SWISS_ISP = "swiss-isp"
     INDEPENDENT = "independent"
+    # Austria-specific providers
+    A1 = "a1"
+    GEMDAT = "gemdat"
+    RIS = "ris"
+    EASYNAME = "easyname"
+    AUSTRIA_ISP = "austria_isp"
 
 
 class SignalKind(str, enum.Enum):
