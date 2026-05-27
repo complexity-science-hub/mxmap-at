@@ -57,7 +57,7 @@ class TestSignatures:
             Provider.A1,
             Provider.GEMDAT,
             Provider.RIS,
-            Provider.EASYNAME
+            Provider.EASYNAME,
         }
 
     def test_ms365_has_mx(self):

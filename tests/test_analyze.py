@@ -25,7 +25,7 @@ from mail_sovereignty.analyze import (
 # ---------------------------------------------------------------------------
 
 _MUNIS = {
-    "10101": { # test for strong microsoft signal
+    "10101": {  # test for strong microsoft signal
         "gkz": "10101",
         "name": "Eisenstadt",
         "federal_state": "Burgenland",
@@ -57,7 +57,7 @@ _MUNIS = {
         "spf": "v=spf1 include:spf.protection.outlook.com -all",
         "gateway": None,
     },
-    "20202": { # test for independent signal
+    "20202": {  # test for independent signal
         "gkz": "20202",
         "name": "Tirol Village",
         "federal_state": "Tirol",
@@ -83,7 +83,7 @@ _MUNIS = {
         "spf": "v=spf1 a mx -all",
         "gateway": None,
     },
-    "30303": { # test for single signal
+    "30303": {  # test for single signal
         "gkz": "30303",
         "name": "Town in Niederösterreich",
         "federal_state": "Niederösterreich",
@@ -103,7 +103,7 @@ _MUNIS = {
         "spf": "v=spf1 include:spf.a1.com -all",
         "gateway": "seppmail",
     },
-    "40404": { # test for conflicting signals
+    "40404": {  # test for conflicting signals
         "gkz": "40404",
         "name": "City in Kärnten",
         "federal_state": "Kärnten",
@@ -129,7 +129,7 @@ _MUNIS = {
         "spf": "v=spf1 include:spf.a1.com -all",
         "gateway": "seppmail",
     },
-    "50505": { # test for no signal
+    "50505": {  # test for no signal
         "gkz": "50505",
         "name": "No Signal Town",
         "federal_state": "",
@@ -195,7 +195,7 @@ def test_report_federal_states(capsys: pytest.CaptureFixture[str]) -> None:
     assert "Burgenland" in out
     assert "Tirol" in out
     assert "Niederösterreich" in out
-    #assert "??" in out  # empty federal state - not present in data
+    # assert "??" in out  # empty federal state - not present in data
 
 
 def test_report_confidence(capsys: pytest.CaptureFixture[str]) -> None:

@@ -2,7 +2,7 @@
 
 Interactive maps showing where Austrian municipalities host their email and how deeply their DNS is tied to US hyperscalers (Microsoft, Google, AWS) versus Austrian providers and self-hosted solutions.
 
-(include link and screenshots later?)
+(include link and screenshots later)
 
 ## How it works
 
@@ -53,8 +53,8 @@ we use a weighted evidence system where each probe contributes signals of varyin
 ```bash
 uv sync
 
-# Stage 1: resolve municipality domains
-uv run resolve-domains
+# Extract Austrian municipalities from Städtebund
+uv run extract-austria-municipalities
 
 # Stage 1: resolve municipality domains
 uv run resolve-domains

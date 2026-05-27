@@ -4,9 +4,10 @@ from pathlib import Path
 
 from mail_sovereignty.log import setup as setup_logging
 
+
 def extract_austria_municipalities() -> None:
     from mail_sovereignty.extract_austria_municipalities import main
-    
+
     parser = argparse.ArgumentParser(description="Extract Austria municipality data")
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="Enable debug logging"
@@ -17,11 +18,14 @@ def extract_austria_municipalities() -> None:
 
     asyncio.run(main())
 
+
 def resolve_domains() -> None:
     from mail_sovereignty.resolve import run
 
     parser = argparse.ArgumentParser(description="Resolve municipality email domains")
-    parser.add_argument("--date", help="Municipality snapshot date (DD-MM-YYYY)", default=None)
+    parser.add_argument(
+        "--date", help="Municipality snapshot date (DD-MM-YYYY)", default=None
+    )
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="Enable debug logging"
     )
@@ -30,7 +34,12 @@ def resolve_domains() -> None:
     setup_logging(args.verbose)
 
     asyncio.run(
-        run(Path("data/municipality_domains.json"), Path("data/overrides.json"), Path("data/municipalities_gv_at.csv"), date=args.date)
+        run(
+            Path("data/municipality_domains.json"),
+            Path("data/overrides.json"),
+            Path("data/municipalities_gv_at.csv"),
+            date=args.date,
+        )
     )
 
 

@@ -54,7 +54,12 @@ class TestSerializeResult:
             mx_hosts=["example.mail.protection.outlook.com"],
             spf_raw="v=spf1 include:spf.protection.outlook.com -all",
         )
-        entry = {"gkz": "351", "name": "Eisenstadt", "federal_state": "Burgenland", "domain": "eisenstadt.at"}
+        entry = {
+            "gkz": "351",
+            "name": "Eisenstadt",
+            "federal_state": "Burgenland",
+            "domain": "eisenstadt.at",
+        }
         out = _serialize_result(entry, result)
 
         assert out["gkz"] == "351"

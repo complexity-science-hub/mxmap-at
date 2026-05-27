@@ -71,9 +71,7 @@ SIGNATURES: list[ProviderSignature] = [
     ProviderSignature(
         provider=Provider.A1,
         spf_includes=("a1.net",),
-        mx_patterns=(
-            "a1.net",
-        ),
+        mx_patterns=("a1.net",),
         asns=(8447,),
     ),
     ProviderSignature(
@@ -85,15 +83,11 @@ SIGNATURES: list[ProviderSignature] = [
     ),
     ProviderSignature(
         provider=Provider.RIS,
-        mx_patterns=(
-            "ris.at",
-        ),
+        mx_patterns=("ris.at",),
     ),
     ProviderSignature(
         provider=Provider.EASYNAME,
-        mx_patterns=(
-            "easyname.eu",
-        ),
+        mx_patterns=("easyname.eu",),
     ),
     # TODO: add more providers? extend current ones
 ]

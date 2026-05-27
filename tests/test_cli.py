@@ -34,6 +34,7 @@ class TestCli:
                 Path("data/municipalities_gv_at.csv"),
                 date=None,
             )
+
     """ # date was used for bfs api -> not used anymore
     def test_resolve_domains_with_date(self):
         with (
@@ -47,6 +48,7 @@ class TestCli:
                 date="15-03-2026",
             )
     """
+
     def test_resolve_domains_verbose(self):
         with (
             patch("mail_sovereignty.resolve.run", new_callable=AsyncMock),

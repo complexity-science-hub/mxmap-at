@@ -94,9 +94,19 @@ def load_data(path: Path) -> dict[str, Any]:
 # Helpers
 # ---------------------------------------------------------------------------
 
-_PROVIDERS_ORDERED = ["microsoft", "google", "aws", "independent", "a1", "gemdat", "ris", "easyname"]
+_PROVIDERS_ORDERED = [
+    "microsoft",
+    "google",
+    "aws",
+    "independent",
+    "a1",
+    "gemdat",
+    "ris",
+    "easyname",
+]
 
 _PRIMARY_SIGNAL_KINDS = {"mx", "spf", "dkim", "autodiscover"}
+
 
 def _category(provider: str) -> str:
     return _CATEGORY_MAP.get(provider, "unknown")

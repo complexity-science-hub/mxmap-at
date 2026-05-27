@@ -22,7 +22,6 @@ _CATEGORY_MAP: dict[str, str] = {
     "microsoft": "us-cloud",
     "google": "us-cloud",
     "aws": "us-cloud",
-
     "a1": "austrian-based",
     "gemdat": "austrian-based",
     "ris": "austrian-based",

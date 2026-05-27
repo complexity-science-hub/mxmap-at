@@ -24,7 +24,6 @@ from mail_sovereignty.constants import (
     TYPO3_RE,
 )
 from mail_sovereignty.dns import lookup_mx
-from mail_sovereignty.extract_austria_municipalities import main as extract_austria_municipalities
 
 
 def url_to_domain(url: str | None) -> str | None:
@@ -45,8 +44,7 @@ def _slugify_name(name: str) -> set[str]:
 
     # German umlaut transliteration
     de = (
-        raw
-        .replace("\u00fc", "ue")
+        raw.replace("\u00fc", "ue")
         .replace("\u00e4", "ae")
         .replace("\u00f6", "oe")
         .replace("\u00df", "ss")
@@ -68,8 +66,7 @@ def guess_domains(name: str, federal_state: str = "") -> list[str]:
         raw = re.sub(r"\s*\(.*?\)\s*", "", raw)
 
         de = (
-            raw
-            .replace("\u00fc", "ue")
+            raw.replace("\u00fc", "ue")
             .replace("\u00e4", "ae")
             .replace("\u00f6", "oe")
             .replace("\u00df", "ss")
@@ -99,7 +96,7 @@ def guess_domains(name: str, federal_state: str = "") -> list[str]:
 
                 if first_slug and first_slug not in slugs:
                     extras.add(first_slug)
-            
+
             if first == "sankt":
                 second = variant.split()[1] if len(variant.split()) > 1 else ""
                 second_slug = slugify(second)
@@ -301,6 +298,7 @@ async def _fetch_sparql(
     r.raise_for_status()
     return r
 
+
 async def fetch_wikidata() -> dict[str, dict[str, str]]:
     """Query Wikidata for Austrian municipalities."""
     logger.info("Fetching municipalities from Wikidata")
@@ -328,10 +326,10 @@ async def fetch_wikidata() -> dict[str, dict[str, str]]:
         name = row.get("itemLabel", {}).get("value", "")
         gkz = row.get("gkz", {}).get("value", "")
         website = row.get("website", {}).get("value", "")
-        
+
         if not gkz or not name:
             continue
-        
+
         if gkz not in municipalities:
             municipalities[gkz] = {
                 "name": name,
@@ -361,6 +359,7 @@ def load_overrides(overrides_path: Path) -> dict[str, dict[str, str]]:
     except (json.JSONDecodeError, IOError) as e:
         logger.warning("Failed to parse overrides file {}: {}", overrides_path, e)
         return {}
+
 
 def load_staedtebund(csv_path: Path) -> pd.DataFrame:
     """Load Städtebund data from CSV file."""
@@ -623,7 +622,7 @@ async def resolve_municipality_domain(
     wikidata_domain = url_to_domain(m.get("website", ""))
     if wikidata_domain:
         if await lookup_mx(wikidata_domain):
-            sources["wikidata"].add(wikidata_domain) 
+            sources["wikidata"].add(wikidata_domain)
 
         # Scrape website for email addresses
         if wikidata_domain:
@@ -651,7 +650,12 @@ async def resolve_municipality_domain(
     return entry
 
 
-async def run(output_path: Path, overrides_path: Path, staedtebund_csv_path: Path, date: str | None = None) -> None:
+async def run(
+    output_path: Path,
+    overrides_path: Path,
+    staedtebund_csv_path: Path,
+    date: str | None = None,
+) -> None:
     # 1. Load sources
     overrides = load_overrides(overrides_path)
     logger.info(f"Loaded {len(overrides)} overrides.")
@@ -659,7 +663,7 @@ async def run(output_path: Path, overrides_path: Path, staedtebund_csv_path: Pat
     staedtebund_data = load_staedtebund(staedtebund_csv_path)
     staedtebund_data["gkz"] = staedtebund_data["gkz"].astype("Int64").astype(str)
     logger.info(f"Loaded {len(staedtebund_data)} municipalities from Städtebund.")
-    
+
     wikidata = await fetch_wikidata()
     logger.info(f"Loaded {len(wikidata)} municipalities from Wikidata.")
 
@@ -670,7 +674,8 @@ async def run(output_path: Path, overrides_path: Path, staedtebund_csv_path: Pat
     staedtebund_only = staedtebund_gkz - wikidata_gkz
     if staedtebund_only:
         logger.warning(
-            "{} municipalities in Städtebund but missing from Wikidata", len(staedtebund_only)
+            "{} municipalities in Städtebund but missing from Wikidata",
+            len(staedtebund_only),
         )
         for gkz in sorted(staedtebund_only, key=int):
             m = staedtebund_data[staedtebund_data["gkz"] == gkz].iloc[0]
@@ -679,7 +684,8 @@ async def run(output_path: Path, overrides_path: Path, staedtebund_csv_path: Pat
     wikidata_only = wikidata_gkz - staedtebund_gkz
     if wikidata_only:
         logger.warning(
-            "{} municipalities in Wikidata but missing from Städtebund", len(wikidata_only)
+            "{} municipalities in Wikidata but missing from Städtebund",
+            len(wikidata_only),
         )
         for gkz in sorted(wikidata_only):
             m = wikidata[gkz]
@@ -701,7 +707,14 @@ async def run(output_path: Path, overrides_path: Path, staedtebund_csv_path: Pat
         if gkz in wikidata:
             entry["website"] = wikidata[gkz].get("website", "")
         if name in [m["name"] for m in wikidata.values()]:
-            federal_state_match = next((m for m in wikidata.values() if m["name"] == name and m.get("federal_state") == federal_state), None)
+            federal_state_match = next(
+                (
+                    m
+                    for m in wikidata.values()
+                    if m["name"] == name and m.get("federal_state") == federal_state
+                ),
+                None,
+            )
             if federal_state_match:
                 entry["website"] = federal_state_match.get("website", "")
 
@@ -712,8 +725,15 @@ async def run(output_path: Path, overrides_path: Path, staedtebund_csv_path: Pat
             name = entry["name"]
             federal_state = entry.get("federal_state", "")
             # check if the name+federal state combo already exists in municipalities
-            if any(m["name"] == name and m.get("federal_state") == federal_state for m in municipalities.values()):
-                logger.info("Skipping duplicate municipality: {} (federal state: {})", name, federal_state)
+            if any(
+                m["name"] == name and m.get("federal_state") == federal_state
+                for m in municipalities.values()
+            ):
+                logger.info(
+                    "Skipping duplicate municipality: {} (federal state: {})",
+                    name,
+                    federal_state,
+                )
                 continue
             municipalities[gkz] = {
                 "name": name,
@@ -799,7 +819,15 @@ async def run(output_path: Path, overrides_path: Path, staedtebund_csv_path: Pat
 
     logger.info("--- Domain resolution: {} municipalities ---", len(results))
     logger.info("By source:")
-    for source in ["override", "staedtebund", "wikidata", "scrape", "redirect", "guess", "none"]:
+    for source in [
+        "override",
+        "staedtebund",
+        "wikidata",
+        "scrape",
+        "redirect",
+        "guess",
+        "none",
+    ]:
         logger.info("  {:<12} {:>5}", source, source_counts.get(source, 0))
     logger.info("By confidence:")
     for conf in ["high", "medium", "low", "none"]:

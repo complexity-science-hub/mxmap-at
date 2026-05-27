@@ -799,9 +799,7 @@ class TestResolveMunicipalityDomain:
 
 
 # Sample Austrian municipalities CSV
-MUNICIPALITIES_CSV_HEADER = (
-    "municipality_name,bundesland,gkz,domain"
-)
+MUNICIPALITIES_CSV_HEADER = "municipality_name,bundesland,gkz,domain"
 SAMPLE_MUNICIPALITIES_CSV = f"""{MUNICIPALITIES_CSV_HEADER}
 Eisenstadt,Burgenland,10101,eisenstadt.gv.at
 Graz,Steiermark,60101,graz.at
@@ -1043,13 +1041,13 @@ class TestResolveRunErrorIsolation:
             await run(output, overrides, municipalities_csv, date="01-01-2026")
 
         data = json.loads(output.read_text())
-         # Linz succeeded, Graz failed/skipped
+        # Linz succeeded, Graz failed/skipped
         assert "40101" in data["municipalities"]
         assert "60101" not in data["municipalities"]
 
 
 class TestResolveRunLogging:
-     """
+    """
     @respx.mock
     async def test_logs_bfs_only_warning(self, tmp_path, caplog):
         #BFS-only municipalities should produce a warning log.
@@ -1075,7 +1073,8 @@ class TestResolveRunLogging:
             "municipalities in gkz but missing from Wikidata" in msg
             for msg in caplog.messages
         )
-        """
+    """
+
 
 # ── _process_scrape_response() ────────────────────────────────────────
 
