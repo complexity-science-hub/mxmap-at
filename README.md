@@ -2,16 +2,23 @@
 
 Interactive maps showing where Austrian municipalities host their email and how deeply their DNS is tied to US hyperscalers (Microsoft, Google, AWS) versus Austrian providers and self-hosted solutions.
 
-(include link and screenshots later)
+**[View the maps](https://complexity-science-hub.github.io/mxmap-at/)**
+
+[![Screenshot of MXmap](og-image.jpg)](https://complexity-science-hub.github.io/mxmap-at/)
 
 ## How it works
 
 The data pipeline has two stages:
 
 1. **Resolve domains** — Scrapes all ~2100 Austrian municipalities from the Österreichischer Städtebund
-and extends it with Wikidata. Applies manual overrides, scrapes municipal websites for email addresses, guesses domains from municipality names, and verifies candidates with MX lookups. Scores source agreement to pick the best domain. Outputs `municipality_domains.json`.
+and extends it with Wikidata. Applies manual overrides, scrapes municipal websites for email addresses,
+guesses domains from municipality names, and verifies candidates with MX lookups. Scores source agreement
+to pick the best domain. Outputs `municipality_domains.json`.
 
-2. **Classify providers** — For each resolved domain, looks up all MX hosts, pattern-matches them, then runs 10 concurrent probes (SPF, DKIM, DMARC, Autodiscover, CNAME chain, SMTP banner, Tenant, ASN, TXT verification, SPF IP). Aggregates weighted evidence, computes confidence scores (0–100). Outputs `data.json` (full) and `data.min.json` (minified for the frontend).
+2. **Classify providers** — For each resolved domain, looks up all MX hosts, pattern-matches them, then runs
+10 concurrent probes (SPF, DKIM, DMARC, Autodiscover, CNAME chain, SMTP banner, Tenant, ASN, TXT verification,
+SPF IP). Aggregates weighted evidence, computes confidence scores (0–100). Outputs `data.json` (full) and
+`data.min.json` (minified for the frontend).
 
 ```mermaid
 flowchart TD
@@ -39,7 +46,7 @@ flowchart TD
     end
 
     vote --> data[("data.json + data.min.json")]
-    data --> frontend["Leaflet map<br/>mxmap.ch"]
+    data --> frontend["Leaflet map<br/>https://complexity-science-hub.github.io/mxmap-at/"]
 ```
 
 ## Classification system
@@ -85,35 +92,7 @@ uv run ruff format src tests
 
 ## Related work
 
-* [hpr4379 :: Mapping Municipalities' Digital Dependencies](https://hackerpublicradio.org/eps/hpr4379/index.html)
-* If you know of other similar projects, please open an issue or submit a PR to add them here!
-
-## Forks
-
-Country-specific forks, alphabetical by country code:
-
-* **BE** — https://mxmap.be/
-* **DE** — https://b42labs.github.io/mxmap/ · https://mx-map.de/
-* **EU** — https://livenson.github.io/mxmap/
-* **FR** — https://mxmairies.fr/
-* **LV** — https://securit.lv/mxmap
-* **NL** — https://mxmap.nl/
-* **NO** — https://kommune-epost-norge.netlify.app/
-* **PT** — https://mxmap.pt/
-* **SE** — https://swedish-mail-dependency.netlify.app/
-* **UK** — https://mxmap.uk/
-
-Related projects:
-
-* [CAmap Nordic & Baltic](https://koldex.github.io/ca-sovereignty-map/) — TLS CA sovereignty for Nordic and Baltic municipalities ([source](https://github.com/koldex/ca-sovereignty-map))
-
-See also the [forks of this repository](https://github.com/davidhuser/mxmap/network/members).
-
-
-## Contributing
-
-If you spot a misclassification, please open an issue with the BFS number and the correct provider.
-For municipalities where automated detection fails, corrections can be added to [`overrides.json`](overrides.json).
+See the original project: https://github.com/davidhuser/mxmap
 
 ## Licence
 

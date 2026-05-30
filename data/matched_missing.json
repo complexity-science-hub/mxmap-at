@@ -300,226 +300,141 @@
     "gkz": "62372"
   },
   "90101": {
-    "name": "Wien - Innere Stadt",
+    "name": "wien-innere stadt",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90101"
   },
   "90201": {
-    "name": "Wien - Leopoldstadt",
+    "name": "wien-leopoldstadt",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90201"
   },
   "90301": {
-    "name": "Wien - Landstraße",
+    "name": "wien-landstraße",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90301"
   },
   "90401": {
-    "name": "Wien - Wieden",
+    "name": "wien-wieden",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90401"
   },
   "90501": {
-    "name": "Wien - Margareten",
+    "name": "wien-margareten",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90501"
   },
   "90601": {
-    "name": "Wien - Mariahilf",
+    "name": "wien-mariahilf",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90601"
   },
   "90701": {
-    "name": "Wien - Neubau",
+    "name": "wien-neubau",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90701"
   },
   "90801": {
-    "name": "Wien - Josefstadt",
+    "name": "wien-josefstadt",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90801"
   },
   "90901": {
-    "name": "Wien - Alsergrund",
+    "name": "wien-alsergrund",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "90901"
   },
   "91001": {
-    "name": "Wien - Favoriten",
+    "name": "wien-favoriten",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91001"
   },
   "91101": {
-    "name": "Wien - Simmering",
+    "name": "wien-simmering",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91101"
   },
   "91201": {
-    "name": "Wien - Meidling",
+    "name": "wien-meidling",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91201"
   },
   "91301": {
-    "name": "Wien - Hietzing",
+    "name": "wien-hietzing",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91301"
   },
   "91401": {
-    "name": "Wien - Penzing",
+    "name": "wien-penzing",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91401"
   },
   "91501": {
-    "name": "Wien - Rudolfsheim-Fünfhaus",
+    "name": "wien-rudolfsheim-fünfhaus",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91501"
   },
   "91601": {
-    "name": "Wien - Ottakring",
+    "name": "wien-ottakring",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91601"
   },
   "91701": {
-    "name": "Wien - Hernals",
+    "name": "wien-hernals",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91701"
   },
   "91801": {
-    "name": "Wien - Währing",
+    "name": "wien-währing",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91801"
   },
   "91901": {
-    "name": "Wien - Döbling",
+    "name": "wien-döbling",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "91901"
   },
   "92001": {
-    "name": "Wien - Brigittenau",
+    "name": "wien-brigittenau",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "92001"
   },
   "92101": {
-    "name": "Wien - Floridsdorf",
+    "name": "wien-floridsdorf",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "92101"
   },
   "92201": {
-    "name": "Wien - Donaustadt",
+    "name": "wien-donaustadt",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "92201"
   },
   "92301": {
-    "name": "Wien - Liesing",
+    "name": "wien-liesing",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
     "gkz": "92301"
-  },
-  "31001":{
-      "gkz":"31001",
-      "name":"Alberndorf im Pulkautal",
-      "federal_state":"Niederösterreich",
-      "website":"https://www.alberndorf-pulkautal.at/"
-  },
-  "30802":{
-      "gkz":"30802",
-      "name":"Andlersdorf",
-      "federal_state":"Niederösterreich",
-      "website":"https://andlersdorf.gem2go.at/"
-  },
-  "41308":{
-      "gkz":"41308",
-      "name":"Berg bei Rohrbach",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.rohrbach-berg.at/"
-  },
-  "40602":{
-      "gkz":"40602",
-      "name":"Grünbach",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.gruenbach.ooe.gv.at/"
-  },
-  "61761":{
-      "gkz":"61761",
-      "name":"Gutenberg-Stenzengreith",
-      "federal_state":"Steiermark",
-      "website":"https://gemeinde-gutenberg-stenzengreith.gemeindeinfo.app/"
-  },   
-  "70905":{
-      "gkz":"70905",
-      "name":"Buch bei Jenbach",
-      "federal_state":"Tirol",
-      "website":"https://www.buch-tirol.gv.at/"
-  },
-  "41309":{
-      "gkz":"41309",
-      "name":"Haslach an der Mühl",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.haslach.ooe.gv.at/"
-  },
-  "40610":{
-      "gkz":"40610",
-      "name":"Leopoldschlag",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.leopoldschlag.ooe.gv.at/"
-  },
-  "40910":{
-      "gkz":"40910",
-      "name":"Nußbach",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.nussbach.ooe.gv.at/"
-  },
-  "41224":{
-      "gkz":"41224",
-      "name":"Reichersberg",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.reichersberg.at/"
-  },
-  "10921":{
-      "gkz":"10921",
-      "name":"Rotenturm an der Pinka",
-      "federal_state":"Burgenland",
-      "website":"https://www.gemeinde-rotenturm.at/"
-  },
-  "41428":{
-      "gkz":"41428",
-      "name":"Waldkirchen am Wesen",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.waldkirchen.ooe.gv.at/"
-  },
-  "20531":{
-      "gkz":"20531",
-      "name":"Weitensfeld im Gurktal",
-      "federal_state":"Kärnten",
-      "website":"https://weitensfeld.at/"
-  },
-  "40626":{
-      "gkz":"40626",
-      "name":"Windhaag bei Freistadt",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.windhaag-freistadt.ooe.gv.at/"
   }
-  
 }

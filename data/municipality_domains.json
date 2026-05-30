@@ -1,6 +1,6 @@
 {
-  "generated": "2026-05-25T11:04:57Z",
-  "total": 2112,
+  "generated": "2026-05-29T14:17:56Z",
+  "total": 2185,
   "municipalities": {
     "10101": {
       "gkz": "10101",
@@ -58,21 +58,34 @@
           "breitenbrunn.at"
         ],
         "scrape": [
+          "ams.at",
           "aon.at",
           "bestattung-eisenstadt.at",
+          "bkf.at",
           "bnet.at",
           "breitenbrunn.at",
           "breitenbrunn.bgld.gv.at",
           "citiesapps.com",
+          "edelkirsche.at",
           "eisenstadt.at",
+          "genussquelle.at",
+          "gwoeb.at",
+          "hoepler.at",
           "hotmail.de",
           "lakeside-sailing.at",
+          "landschaftsapotheke.at",
+          "lichtenbergergonzalez.at",
           "oldtimer-club-neusiedlersee.at",
           "rc-breitenbrunn.at",
+          "sandhofer.net",
           "seglergemeinschaft.at",
           "silverserver.at",
           "soziale-dienste-burgenland.at",
-          "ssvbreitenbrunn.at"
+          "ssvbreitenbrunn.at",
+          "turmhof.com",
+          "weinbau-anscheringer.at",
+          "weinguthumer.at",
+          "weinvomfriedrichkeit.at"
         ],
         "redirect": [],
         "guess": [
@@ -489,7 +502,7 @@
       "gkz": "10318",
       "name": "Wimpassing an der Leitha",
       "federal_state": "Burgenland",
-      "domain": "oegig.at",
+      "domain": "ziegelwerk-gasthaus.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -1000,7 +1013,7 @@
       "gkz": "10417",
       "name": "Tobaj",
       "federal_state": "Burgenland",
-      "domain": "tobaj.bgld.gv.at",
+      "domain": "biber-bgld.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -1066,7 +1079,8 @@
           "raiffeisen-burgenland.at",
           "robertgamperl.com",
           "weinidylle.at",
-          "woerterberg.bgld.gv.at"
+          "woerterberg.bgld.gv.at",
+          "yfu.at"
         ],
         "redirect": [],
         "guess": [
@@ -2119,7 +2133,7 @@
       "gkz": "10703",
       "name": "Bruckneudorf",
       "federal_state": "Burgenland",
-      "domain": "bruckneudorf.bgld.gv.at",
+      "domain": "bzsv.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -3456,7 +3470,7 @@
       "gkz": "10903",
       "name": "Deutsch Schützen-Eisenberg",
       "federal_state": "Burgenland",
-      "domain": "deutsch-schuetzen.at",
+      "domain": "bgld.gv.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -3555,7 +3569,7 @@
       "gkz": "10907",
       "name": "Kemeten",
       "federal_state": "Burgenland",
-      "domain": "kemeten.bgld.gv.at",
+      "domain": "polizei.gv.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -3692,7 +3706,7 @@
       "gkz": "10913",
       "name": "Markt Neuhodis",
       "federal_state": "Burgenland",
-      "domain": "markt-neuhodis.at",
+      "domain": "marktneuhodis.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -3809,7 +3823,7 @@
       "gkz": "10918",
       "name": "Pinkafeld",
       "federal_state": "Burgenland",
-      "domain": "pinkafeld.bgld.gv.at",
+      "domain": "apotheke-pinkafeld.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -3881,15 +3895,13 @@
       "gkz": "10921",
       "name": "Rotenturm an der Pinka",
       "federal_state": "Burgenland",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "gemeinde-rotenturm.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "gemeinde-rotenturm.at"
+        ]
       },
       "flags": []
     },
@@ -3928,6 +3940,7 @@
         "staedtebund": [],
         "wikidata": [],
         "scrape": [
+          "burghotel-schlaining.at",
           "stadtschlaining.bgld.gv.at"
         ],
         "redirect": [],
@@ -4258,7 +4271,7 @@
       "gkz": "20307",
       "name": "Kötschach-Mauthen",
       "federal_state": "Kärnten",
-      "domain": "ktn.gde.at",
+      "domain": "energie-autark.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -4610,7 +4623,8 @@
         "scrape": [
           "hemma-stiftung.at",
           "ktn.gde.at",
-          "ktn.gv.at"
+          "ktn.gv.at",
+          "woerthersee-karolinger.at"
         ],
         "redirect": [],
         "guess": [
@@ -4764,21 +4778,21 @@
       "gkz": "20442",
       "name": "Magdalensberg",
       "federal_state": "Kärnten",
-      "domain": "magdalensberg.at",
-      "source": "guess",
-      "confidence": "low",
+      "domain": "ktn.gde.at",
+      "source": "scrape",
+      "confidence": "medium",
       "sources_detail": {
         "staedtebund": [],
         "wikidata": [],
-        "scrape": [],
+        "scrape": [
+          "ktn.gde.at"
+        ],
         "redirect": [],
         "guess": [
           "magdalensberg.at"
         ]
       },
-      "flags": [
-        "guess_only"
-      ]
+      "flags": []
     },
     "20501": {
       "gkz": "20501",
@@ -5208,15 +5222,13 @@
       "gkz": "20531",
       "name": "Weitensfeld im Gurktal",
       "federal_state": "Kärnten",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "weitensfeld.at",
+      "source": "override",
+      "confidence": "medium",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "weitensfeld.at"
+        ]
       },
       "flags": []
     },
@@ -6376,16 +6388,12 @@
       "gkz": "20727",
       "name": "Wernberg",
       "federal_state": "Kärnten",
-      "domain": "wernberg.gv.at",
-      "source": "staedtebund",
+      "domain": "ktn.gde.at",
+      "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
-        "staedtebund": [
-          "wernberg.gv.at"
-        ],
-        "wikidata": [
-          "wernberg.gv.at"
-        ],
+        "staedtebund": [],
+        "wikidata": [],
         "scrape": [
           "ktn.gde.at"
         ],
@@ -6394,9 +6402,7 @@
           "wernberg.at"
         ]
       },
-      "flags": [
-        "sources_disagree"
-      ]
+      "flags": []
     },
     "20801": {
       "gkz": "20801",
@@ -6650,7 +6656,7 @@
       "gkz": "20813",
       "name": "Sankt Kanzian am Klopeiner See",
       "federal_state": "Kärnten",
-      "domain": "st-kanzian.at",
+      "domain": "kanzian.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -6696,7 +6702,7 @@
       "gkz": "20817",
       "name": "Völkermarkt",
       "federal_state": "Kärnten",
-      "domain": "bestattung-voelkermarkt.at",
+      "domain": "awv-vj.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -7070,7 +7076,7 @@
       "gkz": "21007",
       "name": "Reichenau",
       "federal_state": "Kärnten",
-      "domain": "kindernest.or.at",
+      "domain": "citiesapps.com",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -8850,23 +8856,23 @@
       "gkz": "30646",
       "name": "Blumau-Neurißhof",
       "federal_state": "Niederösterreich",
-      "domain": "daniela-wirth.at",
-      "source": "scrape",
-      "confidence": "medium",
+      "domain": "blumau-neurisshof.gv.at",
+      "source": "staedtebund",
+      "confidence": "high",
       "sources_detail": {
         "staedtebund": [
           "blumau-neurisshof.gv.at"
         ],
         "wikidata": [],
         "scrape": [
-          "daniela-wirth.at"
+          "blumau-neurisshof.gv.at",
+          "caritas-wien.at",
+          "id-austria.gv.at"
         ],
         "redirect": [],
         "guess": []
       },
-      "flags": [
-        "sources_disagree"
-      ]
+      "flags": []
     },
     "30701": {
       "gkz": "30701",
@@ -9689,9 +9695,21 @@
         ],
         "scrape": [
           "aderklaa.gv.at",
+          "aon.at",
           "appmea.com",
+          "arztdw.at",
+          "bggrossenzersdorf.ac.at",
+          "borgdw.at",
           "citiesapps.com",
-          "feuerwehr.gv.at"
+          "edu.klg.or.at",
+          "feuerwehr.gv.at",
+          "katholischekirche.at",
+          "msdw.at",
+          "nmsdeutschwagram.ac.at",
+          "noe.hilfswerk.at",
+          "noen.kinderfreunde.at",
+          "noeschule.at",
+          "vsdeutsch-wagram.ac.at"
         ],
         "redirect": [],
         "guess": []
@@ -9702,15 +9720,13 @@
       "gkz": "30802",
       "name": "Andlersdorf",
       "federal_state": "Niederösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "andlersdorf.gem2go.at",
+      "source": "override",
+      "confidence": "medium",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "andlersdorf.gem2go.at"
+        ]
       },
       "flags": []
     },
@@ -11241,15 +11257,13 @@
       "gkz": "31001",
       "name": "Alberndorf im Pulkautal",
       "federal_state": "Niederösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "alberndorf-pulkautal.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "alberndorf-pulkautal.at"
+        ]
       },
       "flags": []
     },
@@ -12302,8 +12316,7 @@
           "bisamberg.at"
         ],
         "scrape": [
-          "bisamberg.at",
-          "energiewende-bisamberg.at"
+          "bisamberg.at"
         ],
         "redirect": [],
         "guess": [
@@ -13132,7 +13145,7 @@
       "gkz": "31326",
       "name": "Maria Laach am Jauerling",
       "federal_state": "Niederösterreich",
-      "domain": "texingtal.at",
+      "domain": "maria-laach.gv.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -15622,6 +15635,7 @@
         ],
         "wikidata": [],
         "scrape": [
+          "kem-landumlaa.at",
           "wildenduernbach.gv.at"
         ],
         "redirect": [],
@@ -16259,25 +16273,21 @@
       "federal_state": "Niederösterreich",
       "domain": "aspangberg-st-peter.gv.at",
       "source": "staedtebund",
-      "confidence": "medium",
+      "confidence": "high",
       "sources_detail": {
         "staedtebund": [
           "aspangberg-st-peter.gv.at"
         ],
-        "wikidata": [],
+        "wikidata": [
+          "aspangberg-st-peter.gv.at"
+        ],
         "scrape": [
-          "aspangberg-st-peter.gv.at",
-          "hrs.de"
+          "aspangberg-st-peter.gv.at"
         ],
-        "redirect": [
-          "tiscover.com"
-        ],
+        "redirect": [],
         "guess": []
       },
-      "flags": [
-        "sources_disagree",
-        "website_mismatch"
-      ]
+      "flags": []
     },
     "31804": {
       "gkz": "31804",
@@ -18030,6 +18040,7 @@
           "pyhra.gv.at"
         ],
         "scrape": [
+          "elsbeere-wienerwald.at",
           "pyhra.gv.at"
         ],
         "redirect": [],
@@ -18142,8 +18153,10 @@
         ],
         "wikidata": [],
         "scrape": [
+          "elsbeere-wienerwald.at",
           "frauen-zentrum.at",
           "hdfp.at",
+          "noel.gv.at",
           "stoessing.gv.at"
         ],
         "redirect": [],
@@ -20862,7 +20875,7 @@
       "federal_state": "Niederösterreich",
       "domain": "grossgoettfritz.at",
       "source": "scrape",
-      "confidence": "high",
+      "confidence": "medium",
       "sources_detail": {
         "staedtebund": [],
         "wikidata": [
@@ -20871,12 +20884,16 @@
         "scrape": [
           "grossgoettfritz.at"
         ],
-        "redirect": [],
+        "redirect": [
+          "gem2go.at"
+        ],
         "guess": [
           "grossgoettfritz.at"
         ]
       },
-      "flags": []
+      "flags": [
+        "sources_disagree"
+      ]
     },
     "32511": {
       "gkz": "32511",
@@ -21721,19 +21738,23 @@
       "federal_state": "Oberösterreich",
       "domain": "lochen.at",
       "source": "wikidata",
-      "confidence": "high",
+      "confidence": "medium",
       "sources_detail": {
         "staedtebund": [],
         "wikidata": [
           "lochen.at"
         ],
-        "scrape": [],
+        "scrape": [
+          "lochen.ooe.gv.at"
+        ],
         "redirect": [],
         "guess": [
           "lochen.at"
         ]
       },
-      "flags": []
+      "flags": [
+        "sources_disagree"
+      ]
     },
     "40420": {
       "gkz": "40420",
@@ -22646,15 +22667,13 @@
       "gkz": "40602",
       "name": "Grünbach",
       "federal_state": "Oberösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "gruenbach.ooe.gv.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "gruenbach.ooe.gv.at"
+        ]
       },
       "flags": []
     },
@@ -22863,15 +22882,13 @@
       "gkz": "40610",
       "name": "Leopoldschlag",
       "federal_state": "Oberösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "leopoldschlag.ooe.gv.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "leopoldschlag.ooe.gv.at"
+        ]
       },
       "flags": []
     },
@@ -23184,7 +23201,7 @@
       "gkz": "40624",
       "name": "Wartberg ob der Aist",
       "federal_state": "Oberösterreich",
-      "domain": "wartberg-aist.ooe.gv.at",
+      "domain": "diakoniewerk.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -23229,15 +23246,13 @@
       "gkz": "40626",
       "name": "Windhaag bei Freistadt",
       "federal_state": "Oberösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "windhaag-freistadt.ooe.gv.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "windhaag-freistadt.ooe.gv.at"
+        ]
       },
       "flags": []
     },
@@ -24465,6 +24480,20 @@
       },
       "flags": []
     },
+    "40835": {
+      "gkz": "40835",
+      "name": "Peuerbach",
+      "federal_state": "Oberösterreich",
+      "domain": "peuerbach.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "peuerbach.at"
+        ]
+      },
+      "flags": []
+    },
     "40901": {
       "gkz": "40901",
       "name": "Edlbach",
@@ -24671,15 +24700,13 @@
       "gkz": "40910",
       "name": "Nußbach",
       "federal_state": "Oberösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "nussbach.ooe.gv.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "nussbach.ooe.gv.at"
+        ]
       },
       "flags": []
     },
@@ -24687,7 +24714,7 @@
       "gkz": "40911",
       "name": "Oberschlierbach",
       "federal_state": "Oberösterreich",
-      "domain": "gemeinde-oberschlierbach.at",
+      "domain": "oberschlierbach.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -25412,7 +25439,6 @@
           "st-marien.at"
         ],
         "guess": [
-          "marien.at",
           "sanktmarien.at",
           "st-marien.at",
           "stmarien.at"
@@ -25949,7 +25975,7 @@
       "gkz": "41121",
       "name": "Sankt Nikola an der Donau",
       "federal_state": "Oberösterreich",
-      "domain": "nikola.at",
+      "domain": "st-nikola.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -26179,23 +26205,19 @@
       "federal_state": "Oberösterreich",
       "domain": "eitzing.at",
       "source": "wikidata",
-      "confidence": "medium",
+      "confidence": "high",
       "sources_detail": {
         "staedtebund": [],
         "wikidata": [
           "eitzing.at"
         ],
-        "scrape": [
-          "eitzing.ooe.gv.at"
-        ],
+        "scrape": [],
         "redirect": [],
         "guess": [
           "eitzing.at"
         ]
       },
-      "flags": [
-        "sources_disagree"
-      ]
+      "flags": []
     },
     "41206": {
       "gkz": "41206",
@@ -26549,6 +26571,7 @@
           "pattigham.at"
         ],
         "scrape": [
+          "o.roteskreuz.at",
           "pattigham.ooe.gv.at"
         ],
         "redirect": [],
@@ -26611,15 +26634,13 @@
       "gkz": "41224",
       "name": "Reichersberg",
       "federal_state": "Oberösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "reichersberg.at",
+      "source": "override",
+      "confidence": "medium",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "reichersberg.at"
+        ]
       },
       "flags": []
     },
@@ -27050,15 +27071,13 @@
       "gkz": "41308",
       "name": "Berg bei Rohrbach",
       "federal_state": "Oberösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "rohrbach-berg.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "rohrbach-berg.at"
+        ]
       },
       "flags": []
     },
@@ -27066,15 +27085,13 @@
       "gkz": "41309",
       "name": "Haslach an der Mühl",
       "federal_state": "Oberösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "haslach.ooe.gv.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "haslach.ooe.gv.at"
+        ]
       },
       "flags": []
     },
@@ -27875,6 +27892,20 @@
         "sources_disagree"
       ]
     },
+    "41345": {
+      "gkz": "41345",
+      "name": "Helfenberg",
+      "federal_state": "Oberösterreich",
+      "domain": "helfenberg.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "helfenberg.at"
+        ]
+      },
+      "flags": []
+    },
     "41346": {
       "gkz": "41346",
       "name": "St. Stefan-Afiesl",
@@ -28506,15 +28537,13 @@
       "gkz": "41428",
       "name": "Waldkirchen am Wesen",
       "federal_state": "Oberösterreich",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "waldkirchen.ooe.gv.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "waldkirchen.ooe.gv.at"
+        ]
       },
       "flags": []
     },
@@ -29607,6 +29636,20 @@
       "flags": [
         "sources_disagree"
       ]
+    },
+    "41628": {
+      "gkz": "41628",
+      "name": "Vorderweißenbach",
+      "federal_state": "Oberösterreich",
+      "domain": "vorderweissenbach.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "vorderweissenbach.at"
+        ]
+      },
+      "flags": []
     },
     "41701": {
       "gkz": "41701",
@@ -33162,7 +33205,8 @@
           "goeriach.at"
         ],
         "scrape": [
-          "goeriach.at"
+          "goeriach.at",
+          "naturimgarten.at"
         ],
         "redirect": [],
         "guess": [
@@ -35743,6 +35787,7 @@
           "lindenpark.info",
           "oekoregion-kaindorf.at",
           "purkarthofer-eis.at",
+          "rolfing-providence.com",
           "st.roteskreuz.at",
           "stmk.gv.at",
           "stmk.volkshilfe.at",
@@ -36339,7 +36384,7 @@
           "schaeffern.gv.at"
         ],
         "redirect": [
-          "gem2go.info"
+          "gemeinde.steiermark.at"
         ],
         "guess": [
           "schaeffern.steiermark.at"
@@ -37415,6 +37460,20 @@
       },
       "flags": []
     },
+    "61060": {
+      "gkz": "61060",
+      "name": "Sankt Veit in der Südsteiermark",
+      "federal_state": "Steiermark",
+      "domain": "st-veit-suedsteiermark.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "st-veit-suedsteiermark.gv.at"
+        ]
+      },
+      "flags": []
+    },
     "61061": {
       "gkz": "61061",
       "name": "Straß in Steiermark",
@@ -37465,7 +37524,7 @@
       "gkz": "61102",
       "name": "Gai",
       "federal_state": "Steiermark",
-      "domain": "gai.at",
+      "domain": "gai.steiermark.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -37668,8 +37727,8 @@
       "gkz": "61111",
       "name": "Proleb",
       "federal_state": "Steiermark",
-      "domain": "st-michael-obersteiermark.gv.at",
-      "source": "scrape",
+      "domain": "proleb.gv.at",
+      "source": "staedtebund",
       "confidence": "medium",
       "sources_detail": {
         "staedtebund": [
@@ -37678,9 +37737,7 @@
         "wikidata": [
           "proleb.net"
         ],
-        "scrape": [
-          "st-michael-obersteiermark.gv.at"
-        ],
+        "scrape": [],
         "redirect": [],
         "guess": [
           "proleb.at",
@@ -37909,6 +37966,20 @@
       "flags": [
         "sources_disagree"
       ]
+    },
+    "61120": {
+      "gkz": "61120",
+      "name": "Trofaiach",
+      "federal_state": "Steiermark",
+      "domain": "trofaiach.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "trofaiach.gv.at"
+        ]
+      },
+      "flags": []
     },
     "61203": {
       "gkz": "61203",
@@ -38343,11 +38414,8 @@
         "wikidata": [],
         "scrape": [
           "aon.at",
-          "drei.at",
-          "gaishorn-am-see.at",
           "gaishorn-see.gv.at",
           "gesaeuse.at",
-          "gmx.net",
           "outlook.de",
           "psn.or.at",
           "stmk.gv.at"
@@ -38364,7 +38432,7 @@
       "gkz": "61257",
       "name": "Irdning-Donnersbachtal",
       "federal_state": "Steiermark",
-      "domain": "latschenbrennerei.at",
+      "domain": "diebewegungsrevolution.at",
       "source": "scrape",
       "confidence": "medium",
       "sources_detail": {
@@ -38964,8 +39032,29 @@
           "ranten.gv.at"
         ],
         "scrape": [
+          "ais-agentur.com",
+          "aon.at",
+          "bergundnaturwacht.at",
+          "bfvmu.steiermark.at",
+          "bm-dorfer.at",
           "dvag.at",
-          "ranten.gv.at"
+          "gmx.net",
+          "graz-seckau.at",
+          "hammerschmied.com",
+          "hazissa.at",
+          "hollerer.cc",
+          "hubenbauer.at",
+          "kaufmann.consulting",
+          "moser-holzindustrie.at",
+          "muraunet.at",
+          "ofenbau-weissenbacher.at",
+          "psc.at",
+          "ranten.gv.at",
+          "regionmurau.at",
+          "steiner-baukunst.at",
+          "troadkostn.at",
+          "web.de",
+          "wiesn-relax-camping.at"
         ],
         "redirect": [],
         "guess": [
@@ -39189,7 +39278,7 @@
       "gkz": "61512",
       "name": "Murfeld",
       "federal_state": "Steiermark",
-      "domain": "murfeld.steiermark.at",
+      "domain": "murfeld.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -39650,8 +39739,7 @@
           "albersdorf.at"
         ],
         "scrape": [
-          "albersdorf.at",
-          "tagesmuetter.co.at"
+          "albersdorf.at"
         ],
         "redirect": [],
         "guess": [
@@ -39785,8 +39873,8 @@
           "hofstaetten.at"
         ],
         "scrape": [
-          "dokl.at",
-          "hofstaetten-raab.gv.at"
+          "hofstaetten-raab.gv.at",
+          "va-bauer.at"
         ],
         "redirect": [],
         "guess": [
@@ -40329,15 +40417,13 @@
       "gkz": "61761",
       "name": "Gutenberg-Stenzengreith",
       "federal_state": "Steiermark",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "gemeinde-gutenberg-stenzengreith.gemeindeinfo.app",
+      "source": "override",
+      "confidence": "medium",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "gemeinde-gutenberg-stenzengreith.gemeindeinfo.app"
+        ]
       },
       "flags": []
     },
@@ -40491,6 +40577,34 @@
         "sources_disagree"
       ]
     },
+    "62007": {
+      "gkz": "62007",
+      "name": "Fohnsdorf",
+      "federal_state": "Steiermark",
+      "domain": "fohnsdorf.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "fohnsdorf.at"
+        ]
+      },
+      "flags": []
+    },
+    "62008": {
+      "gkz": "62008",
+      "name": "Gaal",
+      "federal_state": "Steiermark",
+      "domain": "gaal.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "gaal.gv.at"
+        ]
+      },
+      "flags": []
+    },
     "62010": {
       "gkz": "62010",
       "name": "Hohentauern",
@@ -40515,6 +40629,104 @@
       "flags": [
         "sources_disagree"
       ]
+    },
+    "62014": {
+      "gkz": "62014",
+      "name": "Kobenz",
+      "federal_state": "Steiermark",
+      "domain": "kobenz.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "kobenz.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62021": {
+      "gkz": "62021",
+      "name": "Pusterwald",
+      "federal_state": "Steiermark",
+      "domain": "pusterwald.steiermark.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "pusterwald.steiermark.at"
+        ]
+      },
+      "flags": []
+    },
+    "62026": {
+      "gkz": "62026",
+      "name": "Sankt Georgen ob Judenburg",
+      "federal_state": "Steiermark",
+      "domain": "st-georgen-judenburg.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "st-georgen-judenburg.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62032": {
+      "gkz": "62032",
+      "name": "Sankt Peter ob Judenburg",
+      "federal_state": "Steiermark",
+      "domain": "st-peter-judenburg.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "st-peter-judenburg.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62034": {
+      "gkz": "62034",
+      "name": "Seckau",
+      "federal_state": "Steiermark",
+      "domain": "seckau.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "seckau.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62036": {
+      "gkz": "62036",
+      "name": "Unzmarkt-Frauenburg",
+      "federal_state": "Steiermark",
+      "domain": "unzmarkt-frauenburg.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "unzmarkt-frauenburg.at"
+        ]
+      },
+      "flags": []
+    },
+    "62038": {
+      "gkz": "62038",
+      "name": "Zeltweg",
+      "federal_state": "Steiermark",
+      "domain": "zeltweg.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "zeltweg.gv.at"
+        ]
+      },
+      "flags": []
     },
     "62039": {
       "gkz": "62039",
@@ -40778,6 +40990,118 @@
         "sources_disagree"
       ]
     },
+    "62105": {
+      "gkz": "62105",
+      "name": "Breitenau am Hochlantsch",
+      "federal_state": "Steiermark",
+      "domain": "breitenau-hochlantsch.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "breitenau-hochlantsch.at"
+        ]
+      },
+      "flags": []
+    },
+    "62115": {
+      "gkz": "62115",
+      "name": "Krieglach",
+      "federal_state": "Steiermark",
+      "domain": "krieglach.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "krieglach.at"
+        ]
+      },
+      "flags": []
+    },
+    "62116": {
+      "gkz": "62116",
+      "name": "Langenwang",
+      "federal_state": "Steiermark",
+      "domain": "langenwang.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "langenwang.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62125": {
+      "gkz": "62125",
+      "name": "Pernegg an der Mur",
+      "federal_state": "Steiermark",
+      "domain": "pernegg.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "pernegg.at"
+        ]
+      },
+      "flags": []
+    },
+    "62128": {
+      "gkz": "62128",
+      "name": "Sankt Lorenzen im Mürztal",
+      "federal_state": "Steiermark",
+      "domain": "stlorenzen.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "stlorenzen.at"
+        ]
+      },
+      "flags": []
+    },
+    "62131": {
+      "gkz": "62131",
+      "name": "Spital am Semmering",
+      "federal_state": "Steiermark",
+      "domain": "spital-semmering.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "spital-semmering.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62132": {
+      "gkz": "62132",
+      "name": "Stanz im Mürztal",
+      "federal_state": "Steiermark",
+      "domain": "stanz.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "stanz.at"
+        ]
+      },
+      "flags": []
+    },
+    "62135": {
+      "gkz": "62135",
+      "name": "Turnau",
+      "federal_state": "Steiermark",
+      "domain": "turnau.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "turnau.at"
+        ]
+      },
+      "flags": []
+    },
     "62138": {
       "gkz": "62138",
       "name": "Aflenz",
@@ -40956,6 +41280,7 @@
           "neuberg.at"
         ],
         "scrape": [
+          "muerzsteg.at",
           "neuberg-muerz.gv.at"
         ],
         "redirect": [],
@@ -40980,8 +41305,7 @@
           "st-barbara.gv.at"
         ],
         "scrape": [
-          "st-barbara.gv.at",
-          "stmk.gv.at"
+          "st-barbara.gv.at"
         ],
         "redirect": [],
         "guess": [
@@ -41077,6 +41401,20 @@
         "sources_disagree"
       ]
     },
+    "62202": {
+      "gkz": "62202",
+      "name": "Bad Blumau",
+      "federal_state": "Steiermark",
+      "domain": "bad-blumau.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "bad-blumau.gv.at"
+        ]
+      },
+      "flags": []
+    },
     "62205": {
       "gkz": "62205",
       "name": "Buch-St. Magdalena",
@@ -41096,10 +41434,265 @@
           "bauernbrot.at",
           "buch-stmagdalena.at",
           "familie-friedrich.at",
-          "stmk.gv.at"
+          "landarzt-praxis.at",
+          "oststeiermark.at",
+          "stmk.gv.at",
+          "tierarzt-peter-winkler.at"
         ],
         "redirect": [],
         "guess": []
+      },
+      "flags": []
+    },
+    "62206": {
+      "gkz": "62206",
+      "name": "Burgau",
+      "federal_state": "Steiermark",
+      "domain": "burgau.steiermark.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "burgau.steiermark.at"
+        ]
+      },
+      "flags": []
+    },
+    "62209": {
+      "gkz": "62209",
+      "name": "Ebersdorf",
+      "federal_state": "Steiermark",
+      "domain": "ebersdorf.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "ebersdorf.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62211": {
+      "gkz": "62211",
+      "name": "Friedberg",
+      "federal_state": "Steiermark",
+      "domain": "friedberg.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "friedberg.at"
+        ]
+      },
+      "flags": []
+    },
+    "62214": {
+      "gkz": "62214",
+      "name": "Greinbach",
+      "federal_state": "Steiermark",
+      "domain": "greinbach.steiermark.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "greinbach.steiermark.at"
+        ]
+      },
+      "flags": []
+    },
+    "62216": {
+      "gkz": "62216",
+      "name": "Großsteinbach",
+      "federal_state": "Steiermark",
+      "domain": "grosssteinbach.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "grosssteinbach.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62219": {
+      "gkz": "62219",
+      "name": "Hartberg",
+      "federal_state": "Steiermark",
+      "domain": "hartberg.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "hartberg.at"
+        ]
+      },
+      "flags": []
+    },
+    "62220": {
+      "gkz": "62220",
+      "name": "Hartberg Umgebung",
+      "federal_state": "Steiermark",
+      "domain": "hartberg-umgebung.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "hartberg-umgebung.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62226": {
+      "gkz": "62226",
+      "name": "Lafnitz",
+      "federal_state": "Steiermark",
+      "domain": "lafnitz.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "lafnitz.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62232": {
+      "gkz": "62232",
+      "name": "Ottendorf an der Rittschein",
+      "federal_state": "Steiermark",
+      "domain": "ottendorf.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "ottendorf.at"
+        ]
+      },
+      "flags": []
+    },
+    "62233": {
+      "gkz": "62233",
+      "name": "Pinggau",
+      "federal_state": "Steiermark",
+      "domain": "pinggau.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "pinggau.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62235": {
+      "gkz": "62235",
+      "name": "Pöllauberg",
+      "federal_state": "Steiermark",
+      "domain": "poellauberg.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "poellauberg.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62242": {
+      "gkz": "62242",
+      "name": "Sankt Jakob im Walde",
+      "federal_state": "Steiermark",
+      "domain": "sankt-jakob.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "sankt-jakob.at"
+        ]
+      },
+      "flags": []
+    },
+    "62244": {
+      "gkz": "62244",
+      "name": "Sankt Johann in der Haide",
+      "federal_state": "Steiermark",
+      "domain": "st-johann-haide.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "st-johann-haide.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62245": {
+      "gkz": "62245",
+      "name": "Sankt Lorenzen am Wechsel",
+      "federal_state": "Steiermark",
+      "domain": "st-lorenzen-wechsel.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "st-lorenzen-wechsel.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62247": {
+      "gkz": "62247",
+      "name": "Schäffern",
+      "federal_state": "Steiermark",
+      "domain": "schaeffern.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "schaeffern.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62252": {
+      "gkz": "62252",
+      "name": "Söchau",
+      "federal_state": "Steiermark",
+      "domain": "soechau.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "soechau.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62256": {
+      "gkz": "62256",
+      "name": "Stubenberg",
+      "federal_state": "Steiermark",
+      "domain": "stubenberg.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "stubenberg.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62262": {
+      "gkz": "62262",
+      "name": "Wenigzell",
+      "federal_state": "Steiermark",
+      "domain": "wenigzell.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wenigzell.at"
+        ]
       },
       "flags": []
     },
@@ -41220,8 +41813,7 @@
           "buchhandlung-buchner.at",
           "evang.at",
           "fuerstenfeld.at",
-          "fuerstenfeld.gv.at",
-          "stwff.at"
+          "fuerstenfeld.gv.at"
         ],
         "redirect": [],
         "guess": [
@@ -41558,6 +42150,132 @@
       "flags": [
         "sources_disagree"
       ]
+    },
+    "62311": {
+      "gkz": "62311",
+      "name": "Edelsbach bei Feldbach",
+      "federal_state": "Steiermark",
+      "domain": "edelsbach.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "edelsbach.at"
+        ]
+      },
+      "flags": []
+    },
+    "62314": {
+      "gkz": "62314",
+      "name": "Eichkögl",
+      "federal_state": "Steiermark",
+      "domain": "eichkoegl.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "eichkoegl.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62326": {
+      "gkz": "62326",
+      "name": "Halbenrain",
+      "federal_state": "Steiermark",
+      "domain": "halbenrain.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "halbenrain.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62330": {
+      "gkz": "62330",
+      "name": "Jagerberg",
+      "federal_state": "Steiermark",
+      "domain": "jagerberg.info",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "jagerberg.info"
+        ]
+      },
+      "flags": []
+    },
+    "62332": {
+      "gkz": "62332",
+      "name": "Kapfenstein",
+      "federal_state": "Steiermark",
+      "domain": "kapfenstein.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "kapfenstein.at"
+        ]
+      },
+      "flags": []
+    },
+    "62335": {
+      "gkz": "62335",
+      "name": "Klöch",
+      "federal_state": "Steiermark",
+      "domain": "kloech.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "kloech.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62343": {
+      "gkz": "62343",
+      "name": "Mettersdorf am Saßbach",
+      "federal_state": "Steiermark",
+      "domain": "mettersdorf.com",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "mettersdorf.com"
+        ]
+      },
+      "flags": []
+    },
+    "62368": {
+      "gkz": "62368",
+      "name": "Tieschen",
+      "federal_state": "Steiermark",
+      "domain": "tieschen.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "tieschen.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "62372": {
+      "gkz": "62372",
+      "name": "Unterlamm",
+      "federal_state": "Steiermark",
+      "domain": "unterlamm.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "unterlamm.gv.at"
+        ]
+      },
+      "flags": []
     },
     "62375": {
       "gkz": "62375",
@@ -43946,6 +44664,7 @@
           "voels.at"
         ],
         "guess": [
+          "v-ls.at",
           "vls.at",
           "voels.at"
         ]
@@ -45001,7 +45720,7 @@
       "gkz": "70522",
       "name": "Reith im Alpbachtal",
       "federal_state": "Tirol",
-      "domain": "reithimalpbachtal.at",
+      "domain": "reith.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -45240,8 +45959,7 @@
         ],
         "wikidata": [],
         "scrape": [
-          "faggen.gv.at",
-          "malermeister-joe.at"
+          "faggen.gv.at"
         ],
         "redirect": [],
         "guess": [
@@ -46465,7 +47183,7 @@
       "gkz": "70726",
       "name": "Sankt Veit in Defereggen",
       "federal_state": "Tirol",
-      "domain": "veit.at",
+      "domain": "st-veit.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -47650,15 +48368,13 @@
       "gkz": "70905",
       "name": "Buch bei Jenbach",
       "federal_state": "Tirol",
-      "domain": "",
-      "source": "none",
-      "confidence": "none",
+      "domain": "buch-tirol.gv.at",
+      "source": "override",
+      "confidence": "high",
       "sources_detail": {
-        "staedtebund": [],
-        "wikidata": [],
-        "scrape": [],
-        "redirect": [],
-        "guess": []
+        "override": [
+          "buch-tirol.gv.at"
+        ]
       },
       "flags": []
     },
@@ -48826,7 +49542,7 @@
       "gkz": "80119",
       "name": "Sankt Anton im Montafon",
       "federal_state": "Vorarlberg",
-      "domain": "st-anton.at",
+      "domain": "anton.at",
       "source": "guess",
       "confidence": "low",
       "sources_detail": {
@@ -49820,6 +50536,7 @@
           "schroecken.at"
         ],
         "scrape": [
+          "berghaus-schroecken.at",
           "warth-schroecken.com"
         ],
         "redirect": [
@@ -49939,6 +50656,7 @@
           "warth.at"
         ],
         "scrape": [
+          "berghaus-schroecken.at",
           "warth-schroecken.com"
         ],
         "redirect": [
@@ -50182,12 +50900,22 @@
           "fraxern.at"
         ],
         "scrape": [
-          "appmea.com",
+          "alexander-nachbaur.at",
+          "aon.at",
           "caritas.at",
           "fraxern.at",
+          "kehabau.com",
           "krankenpflege-kwf.at",
           "krankenpflegeverein-vorderland.at",
-          "v.roteskreuz.at"
+          "lins-bagger.at",
+          "mathes-versichert-es.at",
+          "mittelbergerhof.at",
+          "rene-nachbaur.at",
+          "schnapsatelier.at",
+          "stockfraesa.at",
+          "utanet.at",
+          "v.roteskreuz.at",
+          "vol.at"
         ],
         "redirect": [],
         "guess": [
@@ -50309,10 +51037,17 @@
           "aon.at",
           "appmea.com",
           "asz-vorderland.com",
-          "citiesapps.com",
+          "caritas.at",
           "familienpass-vorarlberg.at",
+          "krankenpflegeverein-vorderland.at",
           "laterns.at",
-          "laterns.net"
+          "laterns.net",
+          "rankweil.at",
+          "rauchfangkehrer-laesser.at",
+          "v.roteskreuz.at",
+          "vorarlberg.at",
+          "vorderland.com",
+          "vorderlandhus.at"
         ],
         "redirect": [],
         "guess": [
@@ -50577,11 +51312,12 @@
         ],
         "scrape": [
           "appmea.com",
-          "citiesapps.com",
           "krankenpflegeverein-vorderland.at",
           "roethis.at",
           "v.roteskreuz.at",
           "viktorsberg.at",
+          "vorarlberg.travel",
+          "vorderland.com",
           "vorderlandhus.at"
         ],
         "redirect": [],
@@ -50669,6 +51405,328 @@
       "flags": [
         "sources_disagree"
       ]
+    },
+    "90101": {
+      "gkz": "90101",
+      "name": "Wien - Innere Stadt",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "90201": {
+      "gkz": "90201",
+      "name": "Wien - Leopoldstadt",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "90301": {
+      "gkz": "90301",
+      "name": "Wien - Landstraße",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "90401": {
+      "gkz": "90401",
+      "name": "Wien - Wieden",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "90501": {
+      "gkz": "90501",
+      "name": "Wien - Margareten",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "90601": {
+      "gkz": "90601",
+      "name": "Wien - Mariahilf",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "90701": {
+      "gkz": "90701",
+      "name": "Wien - Neubau",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "90801": {
+      "gkz": "90801",
+      "name": "Wien - Josefstadt",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "90901": {
+      "gkz": "90901",
+      "name": "Wien - Alsergrund",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91001": {
+      "gkz": "91001",
+      "name": "Wien - Favoriten",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91101": {
+      "gkz": "91101",
+      "name": "Wien - Simmering",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91201": {
+      "gkz": "91201",
+      "name": "Wien - Meidling",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91301": {
+      "gkz": "91301",
+      "name": "Wien - Hietzing",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91401": {
+      "gkz": "91401",
+      "name": "Wien - Penzing",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91501": {
+      "gkz": "91501",
+      "name": "Wien - Rudolfsheim-Fünfhaus",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91601": {
+      "gkz": "91601",
+      "name": "Wien - Ottakring",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91701": {
+      "gkz": "91701",
+      "name": "Wien - Hernals",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91801": {
+      "gkz": "91801",
+      "name": "Wien - Währing",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "91901": {
+      "gkz": "91901",
+      "name": "Wien - Döbling",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "92001": {
+      "gkz": "92001",
+      "name": "Wien - Brigittenau",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "92101": {
+      "gkz": "92101",
+      "name": "Wien - Floridsdorf",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "92201": {
+      "gkz": "92201",
+      "name": "Wien - Donaustadt",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
+    },
+    "92301": {
+      "gkz": "92301",
+      "name": "Wien - Liesing",
+      "federal_state": "Wien",
+      "domain": "wien.gv.at",
+      "source": "override",
+      "confidence": "high",
+      "sources_detail": {
+        "override": [
+          "wien.gv.at"
+        ]
+      },
+      "flags": []
     }
   }
 }

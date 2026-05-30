@@ -574,9 +574,9 @@ class TestResolveMunicipalityDomain:
             "gkz": "10101",
             "name": "Eisenstadt",
             "federal_state": "Burgenland",
-            "website": "https://www.eisenstadt.at",
+            "website": "https://www.eisenstadt.gv.at",
         }
-        overrides = {"10101": {"domain": "eisenstadt.at", "reason": "test"}}
+        overrides = {"10101": {"website": "https://www.eisenstadt.at", "reason": "test"}}
         client = AsyncMock()
 
         with patch(
@@ -881,7 +881,7 @@ class TestResolveRun:
             output = tmp_path / "municipality_domains.json"
             overrides = tmp_path / "overrides.json"
             overrides.write_text(
-                '{"2056": {"domain": "linz.at", "name": "Linz", "federal_state": "Oberoesterreich", "reason": "Missing from Wikidata"}}'
+                '{"2056": {"website": "https://www.linz.at", "name": "Linz", "federal_state": "Oberoesterreich", "reason": "Missing from Wikidata"}}'
             )
             await run(output, overrides, municipalities_csv, date="01-01-2026")
 

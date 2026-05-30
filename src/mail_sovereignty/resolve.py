@@ -590,7 +590,7 @@ async def resolve_municipality_domain(
     # 1. Check overrides (immediate win)
     if gkz in overrides:
         override = overrides[gkz]
-        domain = override["domain"]
+        domain = url_to_domain(override["website"])
         mx = await lookup_mx(domain) if domain else []
         entry["domain"] = domain
         entry["source"] = "override"

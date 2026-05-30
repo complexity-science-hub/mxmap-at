@@ -16,20 +16,18 @@
 <title>MXmap | Email Providers of Austrian Municipalities</title>
 <meta name="description" content="Interactive map showing the email providers of all ~2,100 Austrian municipalities, based on DNS analysis of MX and SPF records.">
 <meta name="keywords" content="Austria, municipalities, email, sovereignty, CLOUD Act, MX records, SPF, DNS, Microsoft 365, Google Workspace, digital sovereignty, data protection">
-<meta name="author" content="David Huser">
+<meta name="author" content="Complexity Science Hub">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://mxmap.at/">
+<link rel="canonical" href="https://complexity-science-hub.github.io/mxmap-at/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="MXmap | Email Providers of Austrian Municipalities">
 <meta property="og:description" content="Interactive map showing where Austrian municipalities host their official email. DNS analysis of all ~2,100 municipalities, color-coded by provider.">
-<meta property="og:url" content="https://mxmap.at/">
+<meta property="og:url" content="https://complexity-science-hub.github.io/mxmap-at/">
 <meta property="og:locale" content="en_AT">
 <meta property="og:site_name" content="MXmap">
-<meta property="og:image" content="https://mxmap.at/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MXmap | Email Providers of Austrian Municipalities">
 <meta name="twitter:description" content="Interactive map showing where Austrian municipalities host their official email. DNS analysis of all ~2,100 municipalities.">
-<meta name="twitter:image" content="https://mxmap.at/og-image.jpg">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='7' width='28' height='18' rx='2' fill='%231a1a2e'/%3E%3Cpath d='M2 9l14 9 14-9' fill='none' stroke='%2316a34a' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="css/shared.css">
 <link rel="stylesheet" href="css/map.css">
@@ -69,11 +67,11 @@
     </div>
     <div class="info-card">
       <h3>Accuracy</h3>
-      <p>Classifications may contain errors. DNS records indicate mail routing, not necessarily where data is stored. <br>If you notice an error, please <a href="https://github.com/davidhuser/mxmap/issues" target="_blank">submit an issue</a>.</p>
+      <p>Classifications may contain errors. DNS records indicate mail routing, not necessarily where data is stored. <br>If you notice an error, please <a href="https://github.com/complexity-science-hub/mxmap-at/issues" target="_blank">submit an issue</a>.</p>
     </div>
     <div class="info-card">
       <h3>Open source &amp; open data</h3>
-      <p>The code and data are on <a href="https://github.com/davidhuser/mxmap" target="_blank">GitHub</a>.</p>
+      <p>The code and data are on <a href="https://github.com/complexity-science-hub/mxmap-at/" target="_blank">GitHub</a>.</p>
       <p id="generated"></p>
     </div>
   </div>
@@ -115,8 +113,8 @@ const LABELS = {
   google:         'Google Workspace',
   aws:            'Amazon Web Services',
   infomaniak:     'Infomaniak',
-  'austrian-isp': 'Austrian ISP',
-  'independent':  'Self-hosted / Other',
+  austrian_isp: 'Austrian ISP',
+  independent:  'Self-hosted / Other',
   unknown:        'Unknown'
 };
 
@@ -149,9 +147,6 @@ function classifyHost(host) {
     return { name: 'Google', category: 'hyperscaler' };
   if (['amazonaws','amazonses','awsdns'].some(k => h.includes(k)))
     return { name: 'AWS', category: 'hyperscaler' };
-  // Swiss (explicit)
-  //if (['infomaniak','mxpool.infomaniak'].some(k => h.includes(k)))
-  //  return { name: 'Infomaniak', category: 'swiss' };
   // Foreign senders
   if (['mandrillapp.com','mandrill','mcsv.net'].some(k => h.includes(k)))
     return { name: 'Mailchimp', category: 'foreign' };
@@ -242,22 +237,20 @@ function classifyHost(host) {
     return { name: 'Evalanche', category: 'foreign' };
   if (h.includes('rubicon.eu'))
     return { name: 'Rubicon', category: 'foreign' };
-  // Known Swiss providers with non-.ch TLDs -- TODO: Add Austrian providers
-  const SWISS_DOMAINS = [  
-    'abxsec.com','swiss-egov.cloud','sui-inter.net','ch-dns.net','cyon.net',
-    'seppmail.cloud','swisscom.com','privasphere.com','tinext.com','cloudrexx.com',
-    'mailomat.cloud','comp-sys.net','engadin.cloud','ti-informatique.com',
-    'assolo.net','moresi.com',
-    'naveum.services','spamvor.com','swisscenter.com','seabix.cloud',
-    'swizzonic.email','tinext.net','hosttech.eu','mailpro.com','tizoo.com'
+  // Known Austrian providers TODO: Add Austrian providers
+  const AUSTRIAN_DOMAINS = [
+    'a1.net',
+    'gemdat.at',
+    'ris.at',
+    'easyname.eu', 'easyname.com'
   ];
-  if (SWISS_DOMAINS.some(d => h.endsWith(d) || h.endsWith('.' + d)))
-    return { name: h.replace(/^_/, '').split('.').slice(-2).join('.'), category: 'swiss' };
+  if (AUSTRIAN_DOMAINS.some(d => h.endsWith(d) || h.endsWith('.' + d)))
+    return { name: h.replace(/^_/, '').split('.').slice(-2).join('.'), category: 'austrian' };
   // TLD-based fallback
   const parts = host.replace(/^_/, '').split('.');
   const name = parts.length >= 2 ? parts.slice(-2).join('.') : host;
   if (h.endsWith('.at') || h.endsWith('.austria'))
-    return { name, category: 'austria' };
+    return { name, category: 'austrian' };
   return { name, category: 'unknown' };
 }
 
@@ -317,7 +310,7 @@ function condenseDetail(kind, detail) {
     case 'asn':
       m = detail.match(/^ASN\s+(\d+)\s+matches\s+\S+$/);
       if (m) return 'AS' + m[1];
-      m = detail.match(/^ASN\s+(\d+)\s+is Swiss ISP:\s+(.+)$/);
+      m = detail.match(/^ASN\s+(\d+)\s+is Austrian ISP:\s+(.+)$/);
       if (m) return 'AS' + m[1] + ' (' + m[2] + ')';
       return detail;
     case 'tenant':
@@ -333,7 +326,7 @@ function condenseDetail(kind, detail) {
       if (detail.includes('AWS SES')) return 'AWS SES';
       return detail;
     case 'spf_ip':
-      m = detail.match(/ASN\s+(\d+)\s+is Swiss ISP:\s+(.+)$/);
+      m = detail.match(/ASN\s+(\d+)\s+is Austrian ISP:\s+(.+)$/);
       if (m) return 'AS' + m[1] + ' (' + m[2] + ')';
       m = detail.match(/ASN\s+(\d+)\s+matches\s+(\S+)$/);
       if (m) return 'AS' + m[1];
@@ -401,6 +394,31 @@ async function loadData() {
   muni = dnsData.municipalities;
   showGenerated(dnsData);
 
+  //Log missing
+  const topoIds = new Set();
+  const missing = [];
+
+  const gemeinden = topojson.feature(topo, topo.objects.gemeinden);
+
+  for (const feature of gemeinden.features) {
+
+    const iso = String(feature.properties.iso);
+
+    topoIds.add(iso);
+
+    if (!muni[iso]) {
+      missing.push({
+        iso,
+        name: feature.properties.name || '(unknown)'
+      });
+    }
+  }
+
+  console.table(missing);
+  window.missingMunicipalities = missing;
+  //copy(JSON.stringify(window.missingMunicipalities, null, 2));
+
+
   // Count by jurisdiction and confidence level
   const catCounts = { 'us-cloud': 0, 'austrian-based': 0 };
   const levelCounts = {
@@ -454,6 +472,7 @@ async function loadData() {
       const m = muni[iso];
       return {
         fillColor: getColor(m),
+        fillColor: getColor(m),
         weight: 0.6,
         color: '#666',
         fillOpacity: 1
@@ -463,7 +482,7 @@ async function loadData() {
       const iso = String(feature.properties.iso);
       const m = muni[iso];
       if (!m) {
-        layer.bindPopup(`<div class="info-popup"><strong>ISO ${iso}</strong><br>No data</div>`);
+        layer.bindPopup(`<div class="info-popup"><strong>GKZ ${iso}</strong><br>No data</div>`);
         return;
       }
       const color = getColor(m);
