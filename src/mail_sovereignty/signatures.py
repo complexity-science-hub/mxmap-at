@@ -26,17 +26,18 @@ class ProviderSignature(BaseModel):
 SIGNATURES: list[ProviderSignature] = [
     ProviderSignature(
         provider=Provider.MS365,
-        mx_patterns=("mail.protection.outlook.com", "mx.microsoft"),
-        spf_includes=("spf.protection.outlook.com",),
+        mx_patterns=("mail.protection.outlook.com", "mx.microsoft", "mail.protection.outlook.de"),
+        spf_includes=("spf.protection.outlook.com","spf.protection.outlook.de"),
         dkim_selectors=("selector1", "selector2"),
         dkim_cname_patterns=("onmicrosoft.com",),
         autodiscover_patterns=("autodiscover.outlook.com",),
-        cname_patterns=("mail.protection.outlook.com", "mx.microsoft"),
+        cname_patterns=("mail.protection.outlook.com", "mx.microsoft", "mail.protection.outlook.de"),
         dmarc_patterns=("rua.agari.com",),
         smtp_banner_patterns=(
             "microsoft esmtp mail service",
             "protection.outlook.com",
             "mx.microsoft",
+            "protection.outlook.de",
         ),
         txt_verification_patterns=("ms=ms",),
         asns=(8075,),
@@ -71,7 +72,8 @@ SIGNATURES: list[ProviderSignature] = [
     ProviderSignature(
         provider=Provider.A1,
         spf_includes=("a1.net",),
-        mx_patterns=("a1.net",),
+        mx_patterns=("a1.net", "aon.at", "aon.cc"),
+        smtp_banner_patterns=("a1",),
         asns=(8447,),
     ),
     ProviderSignature(
@@ -89,7 +91,132 @@ SIGNATURES: list[ProviderSignature] = [
         provider=Provider.EASYNAME,
         mx_patterns=("easyname.eu",),
     ),
-    # TODO: add more providers? extend current ones
+    ProviderSignature(
+        provider=Provider.POST,
+        mx_patterns=("mxs.post.at",),
+        spf_includes=("mxs.post.at", "spf-pp.post.at"),
+    ),
+    ProviderSignature(
+        provider=Provider.ASP_BGLD,
+        mx_patterns=("smtp.asp-bgld.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.W4YMAIL,
+        spf_includes=("spf.w4ymail.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.BON,
+        mx_patterns=("mx1.bon.at", "mx2.bon.at"),
+        spf_includes=("spf.bon.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.WIEN,
+        mx_patterns=("mx01.wien.gv.at", "mx02.wien.gv.at"),
+    ),
+    ProviderSignature(
+        provider=Provider.CNV,
+        mx_patterns=("mail.cnv.at",),
+        spf_includes=("_spf.cnv.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.SALZBURG,
+        mx_patterns=("smtp.salzburg.at",),
+        spf_includes=("_spf.salzburg.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.WVNET,
+        mx_patterns=("smtpgate.wvnet.at", "esg.wvnet.eu"),
+        spf_includes=("_netblocks.wvnet.eu", "_mxblocks.wvnet.eu"),
+    ),
+    ProviderSignature(
+        provider=Provider.MAGENTA,
+        mx_patterns=("mx.mymagenta.business",),
+        spf_includes=("_spf.mymagenta.business",),
+    ),
+    ProviderSignature(
+        provider=Provider.NET4YOU,
+        mx_patterns=("mx1.net4you.net", "mx2.net4you.net"),
+        spf_includes=("net4you.net",),
+    ),
+    ProviderSignature(
+        provider=Provider.KAS,
+        mx_patterns=("kasserver.com",),
+        spf_includes=("spf.kasserver.com",),
+    ),
+    ProviderSignature(
+        provider=Provider.MYMAILWALL,
+        mx_patterns=("mymailwall.com", "mymailwall.at", "scanlab01.mymailwall.at"),
+        spf_includes=("mymailwall.com",),
+    ),
+    ProviderSignature(
+        provider=Provider.SECURE_SHIELD,
+        mx_patterns=("secure-shield.at",),
+        spf_includes=("secure-shield.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.KABELPLUS,
+        mx_patterns=("kabelplus.at",),
+        asns=(8339,),
+    ),
+    ProviderSignature(
+        provider=Provider.CABLELINK,
+        mx_patterns=("cablelink.at", "mx-in.cablelink.at"),
+        spf_includes=("_spf.cablelink.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.NODE4WEB,
+        mx_patterns=("node4web.at",),
+        spf_includes=("spf.node4web.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.HIWAY,
+        mx_patterns=("hiway.at",),
+        spf_includes=("hiway.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.MYNET,
+        mx_patterns=("mynet.at",),
+        spf_includes=("_spf.mynet.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.LGBS,
+        mx_patterns=("lgbs.at",),
+        spf_includes=("lgbs.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.FLASHNET,
+        mx_patterns=("flashnet.at",),
+        spf_includes=("flashnet.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.STYRION,
+        mx_patterns=("styrion.net",),
+        spf_includes=("_spf.styrion.net",),
+    ),
+    ProviderSignature(
+        provider=Provider.VIENNAWEB,
+        mx_patterns=("viennaweb.at",),
+        spf_includes=("spf.viennaweb.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.RIEPERT,
+        mx_patterns=("riepert.at",),
+    ),
+    ProviderSignature(
+        provider=Provider.HALLO_CLOUD,
+        mx_patterns=("hallo.cloud",),
+        spf_includes=("_spf.r29.hallo.cloud",),
+    ),
+    ProviderSignature(
+        provider=Provider.AGENTURSERVER,
+        mx_patterns=("agenturserver.de",),
+        spf_includes=("agenturserver.de",),
+    ),
+    ProviderSignature(
+        provider=Provider.IONOS,
+        mx_patterns=("ionos.de",),
+        spf_includes=("_spf-eu.ionos.com", "_spf.ionos.com"),
+    ),
 ]
 
 

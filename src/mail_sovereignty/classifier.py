@@ -94,17 +94,18 @@ _PROVIDER_RULES: tuple[_Rule, ...] = (
 
 _rule_hits: Counter[str] = Counter()
 
-# fmt: off
-_INDEPENDENT_RULES: tuple[tuple[str, float], ...] = (
-    ("ind_mx_spf",     0.90),  # MX + SPF present
-    ("ind_mx_only",    0.60),  # MX only
-    ("ind_secondary",  0.20),  # secondary evidence only
-    ("ind_none",       0.00),  # nothing
-)
-# fmt: on
 
-_ALL_RULE_NAMES: tuple[str, ...] = tuple(r.name for r in _PROVIDER_RULES) + tuple(
-    name for name, _ in _INDEPENDENT_RULES
+_FALLBACK_RULE_NAMES: tuple[str, ...] = (
+    "ind_mx_spf",
+    "ind_mx_only",
+    "ind_secondary",
+    "ind_none",
+    "unresolved_mx_spf",
+    "unresolved_mx_only",
+)
+
+_ALL_RULE_NAMES: tuple[str, ...] = (
+    tuple(r.name for r in _PROVIDER_RULES) + _FALLBACK_RULE_NAMES
 )
 
 
@@ -146,37 +147,48 @@ def _rule_confidence(
     return 0.40, "fallback"  # pragma: no cover
 
 
-def _independent_confidence(
-    mx_hosts: list[str], spf_raw: str, evidence: list[Evidence]
+def _fallback_confidence(
+    provider: Provider,
+    mx_hosts: list[str],
+    spf_raw: str,
+    evidence: list[Evidence],
 ) -> tuple[float, str]:
-    """Return ``(confidence, rule_name)`` for an INDEPENDENT domain.
-
-    Rules (no provider won the primary-signal vote):
-    ``ind_mx_spf`` 0.90 · ``ind_mx_only`` 0.60 · ``ind_secondary`` 0.20 ·
-    ``ind_none`` 0.0.  Extra signal kinds beyond MX/SPF add
-    ``_BOOST_PER_SIGNAL`` each; capped at 1.0.
-    """
-    has_mx = bool(mx_hosts) or any(e.kind == SignalKind.MX for e in evidence)
-    has_spf = bool(spf_raw) or any(e.kind == SignalKind.SPF for e in evidence)
-
-    if has_mx and has_spf:
-        name, base = _INDEPENDENT_RULES[0]
-    elif has_mx:
-        name, base = _INDEPENDENT_RULES[1]
-    elif evidence:
-        name, base = _INDEPENDENT_RULES[2]
-    else:
-        name, base = _INDEPENDENT_RULES[3]
-        _rule_hits[name] += 1
-        logger.debug("rule={} base=0.00", name)
-        return 0.0, name
-
-    _rule_hits[name] += 1
-    logger.debug("rule={} base={:.2f}", name, base)
-
+    has_mx = bool(mx_hosts)
+    has_spf = bool(spf_raw)
     extra_kinds = {e.kind for e in evidence} - {SignalKind.MX, SignalKind.SPF}
     boost = len(extra_kinds) * _BOOST_PER_SIGNAL
-    return min(1.0, base + boost), name
+
+    if provider == Provider.INDEPENDENT:
+        if has_mx and has_spf:   conf, name = min(1.0, 0.90 + boost), "ind_mx_spf"
+        elif has_mx:             conf, name = min(1.0, 0.60 + boost), "ind_mx_only"
+        elif evidence:           conf, name = min(1.0, 0.20 + boost), "ind_secondary"
+        else:                    conf, name = 0.0, "ind_none"
+    elif provider == Provider.UNRESOLVED:
+        if has_mx and has_spf:   conf, name = min(1.0, 0.50 + boost), "unresolved_mx_spf"
+        elif has_mx:             conf, name = min(1.0, 0.35 + boost), "unresolved_mx_only"
+        else:                    conf, name = 0.0, "ind_none"
+    else:  # UNKNOWN
+        conf, name = 0.0, "ind_none"
+
+    _rule_hits[name] += 1
+    return conf, name
+
+def _is_austrian_independent(
+    mx_hosts: list[str],
+    evidence: list[Evidence],
+    spf_raw: str,
+) -> bool:
+    if any(h.endswith(".at") for h in mx_hosts):
+        return True
+    if any(e.provider == Provider.AUSTRIA_ISP for e in evidence):
+        return True
+    # SPF points to own infrastructure (a/mx mechanisms) or Austrian include
+    for token in spf_raw.lower().split():
+        if token in ("+a", "a", "+mx", "mx"):
+            return True
+        if token.startswith("include:") and token.endswith(".at"):
+            return True
+    return False
 
 
 def _aggregate(
@@ -190,7 +202,7 @@ def _aggregate(
 
     1. Deduplicate by ``(provider, kind)``; exclude INDEPENDENT.
     2. Elect winner by highest primary-signal weight sum.
-    3. Score via ``_rule_confidence`` (winner) or ``_independent_confidence``.
+    3. Score via ``_rule_confidence`` (winner) or ``_fallback_confidence``.
     4. Attach ``gateway``, ``mx_hosts``, ``spf_raw`` unchanged.
     """
     _mx_hosts = mx_hosts or []
@@ -220,9 +232,15 @@ def _aggregate(
     if primary_scores:
         winner = max(primary_scores, key=primary_scores.get)
         confidence, rule_name = _rule_confidence(winner, by_provider[winner], gateway)
-    else:
+    elif _is_austrian_independent(mx_hosts or [], evidence, spf_raw):
         winner = Provider.INDEPENDENT
-        confidence, rule_name = _independent_confidence(_mx_hosts, spf_raw, evidence)
+        confidence, rule_name = _fallback_confidence(winner, _mx_hosts, spf_raw, evidence)
+    elif mx_hosts:
+        winner = Provider.UNRESOLVED
+        confidence, rule_name = _fallback_confidence(winner, _mx_hosts, spf_raw, evidence)
+    else:
+        winner = Provider.UNKNOWN
+        confidence, rule_name = _fallback_confidence(winner, _mx_hosts, spf_raw, evidence)
 
     return ClassificationResult(
         provider=winner,
@@ -287,6 +305,9 @@ async def classify(domain: str) -> ClassificationResult:
         + txt_ev
         + spf_ip_ev
     )
+    # One entry per (kind, provider) pair — ASN fires once per MX host, so four
+    # MX records on the same AWS ASN must not contribute 4× the weight.
+    all_evidence = list({(e.kind, e.provider): e for e in all_evidence}.values())
     result, rule = _aggregate(
         all_evidence, gateway=gateway, mx_hosts=all_mx_hosts, spf_raw=spf_raw
     )

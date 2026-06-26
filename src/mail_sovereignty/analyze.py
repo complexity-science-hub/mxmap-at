@@ -95,14 +95,27 @@ def load_data(path: Path) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 _PROVIDERS_ORDERED = [
+    # US cloud
     "microsoft",
     "google",
     "aws",
-    "independent",
+    # Named Austrian providers (largest first)
+    "post",
+    "asp_bgld",
+    "w4ymail",
+    "bon",
+    "wien",
+    "cnv",
+    "salzburg",
+    "wvnet",
+    "magenta",
+    "net4you",
     "a1",
     "gemdat",
     "ris",
     "easyname",
+    # Catch-all
+    "independent",
 ]
 
 _PRIMARY_SIGNAL_KINDS = {"mx", "spf", "dkim", "autodiscover"}
@@ -155,7 +168,7 @@ def report_overall_summary(data: dict[str, Any], munis: dict[str, Any]) -> None:
         color = _red if _category(prov) == "us-cloud" else _green
         print(
             f"  {color(f'{prov:<16}')} {cnt:>6,}  {_pct(cnt, total)}  "
-            f"{color(_bar(cnt, max(prov_counts.values())))}"
+            f"{color(_bar(cnt, total))}"
         )
 
 
@@ -190,8 +203,8 @@ def report_federal_states(munis: dict[str, Any]) -> None:
     hdr = (
         f"  {'Federal State':<15}{'Total':>5}"
         f"{'MSFT':>6}{'Goog':>6}{'AWS':>5}"
-        f"{'A1':>6}{'Gemdat':>6}{'RIS':>5}{'Easyname':>8}{'Indep':>6}"
-        f"  {'US%':>6}  {'Austrian%':>6}"
+        f"{'Named AT':>9}{'Indep':>6}"
+        f"  {'US%':>6}  {'AT%':>6}"
     )
     print(hdr)
     _sep()
@@ -199,15 +212,17 @@ def report_federal_states(munis: dict[str, Any]) -> None:
     for state, total, pc, us_pct in rows:
         austrian_pct = 100 - us_pct
         color = _red if us_pct >= 70 else (_yellow if us_pct >= 50 else _green)
+        named_at = sum(
+            pc.get(p, 0)
+            for p in _PROVIDERS_ORDERED
+            if _category(p) == "austrian-based" and p != "independent"
+        )
         print(
             f"  {state:<15}{total:>5}"
             f"{pc.get('microsoft', 0):>6}"
             f"{pc.get('google', 0):>6}"
             f"{pc.get('aws', 0):>5}"
-            f"{pc.get('a1', 0):>6}"
-            f"{pc.get('gemdat', 0):>6}"
-            f"{pc.get('ris', 0):>5}"
-            f"{pc.get('easyname', 0):>8}"
+            f"{named_at:>9}"
             f"{pc.get('independent', 0):>6}"
             f"  {color(f'{us_pct:5.1f}%')}"
             f"  {f'{austrian_pct:5.1f}%':>6}"
