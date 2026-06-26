@@ -138,7 +138,7 @@ def _patch_all_probes(**overrides):
 class TestAggregate:
     def test_empty(self):
         result, _ = _aggregate([])
-        assert result.provider == Provider.INDEPENDENT
+        assert result.provider == Provider.UNKNOWN
         assert result.confidence == 0.0
         assert result.evidence == []
         assert result.gateway is None
@@ -209,9 +209,9 @@ class TestAggregate:
 
     def test_independent_evidence_no_winner(self):
         evidence = [_ev(SignalKind.MX, Provider.INDEPENDENT)]
-        result, _ = _aggregate(evidence)
+        result, _ = _aggregate(evidence, mx_hosts=["mail.gemeinde.at"])
         assert result.provider == Provider.INDEPENDENT
-        # MX evidence present → 0.60
+        # Austrian MX host present → 0.60
         assert result.confidence == pytest.approx(0.60)
 
     def test_gateway_passthrough(self):
@@ -231,9 +231,8 @@ class TestAggregate:
             _ev(SignalKind.TENANT, Provider.MS365),
         ]
         result, _ = _aggregate(evidence)
-        assert result.provider == Provider.INDEPENDENT
-        # No MX, secondary evidence only → 0.20 base + 1 extra kind × 0.02
-        assert result.confidence == pytest.approx(0.22)
+        assert result.provider == Provider.UNKNOWN
+        assert result.confidence == 0.0
 
     def test_tenant_with_primary(self):
         """Tenant evidence with MX primary → MX+TENANT rule."""
@@ -286,9 +285,8 @@ class TestAggregate:
             _ev(SignalKind.TXT_VERIFICATION, Provider.MS365),
         ]
         result, _ = _aggregate(evidence)
-        assert result.provider == Provider.INDEPENDENT
-        # No MX, secondary evidence only → 0.20 base + 1 extra kind × 0.02
-        assert result.confidence == pytest.approx(0.22)
+        assert result.provider == Provider.UNKNOWN
+        assert result.confidence == 0.0
 
     def test_txt_verification_with_primary(self):
         """TXT_VERIFICATION with primary signals boosts confidence."""
@@ -307,9 +305,8 @@ class TestAggregate:
             _ev(SignalKind.ASN, Provider.AWS),
         ]
         result, _ = _aggregate(evidence)
-        assert result.provider == Provider.INDEPENDENT
-        # No MX, secondary evidence only → 0.20 base + 1 extra kind × 0.02
-        assert result.confidence == pytest.approx(0.22)
+        assert result.provider == Provider.UNKNOWN
+        assert result.confidence == 0.0
 
     def test_asn_with_primary(self):
         """ASN evidence with primary signals boosts confidence."""
@@ -341,14 +338,13 @@ class TestAggregate:
         assert result.confidence == pytest.approx(0.22)
 
     def test_spf_ip_alone_no_winner(self):
-        """SPF_IP(Google) alone → INDEPENDENT (regression test for zuerich.ch)."""
+        """SPF_IP(Google) alone → UNKNOWN (no Austrian signals)."""
         evidence = [
             _ev(SignalKind.SPF_IP, Provider.GOOGLE),
         ]
         result, _ = _aggregate(evidence)
-        assert result.provider == Provider.INDEPENDENT
-        # No MX, secondary evidence only → 0.20 base + 1 extra kind × 0.02
-        assert result.confidence == pytest.approx(0.22)
+        assert result.provider == Provider.UNKNOWN
+        assert result.confidence == 0.0
 
     def test_spf_ip_with_primary(self):
         """MX(Google) + SPF_IP(Google) → Google with boosted confidence."""
@@ -467,10 +463,10 @@ class TestAggregate:
         assert result.confidence == pytest.approx(0.96)
 
     def test_independent_with_mx_only_half_confidence(self):
-        """Independent domain with MX only → 60% confidence."""
-        result, _ = _aggregate([], mx_hosts=["mail.example.ch"])
+        """Austrian domain with MX only → 60% confidence."""
+        result, _ = _aggregate([], mx_hosts=["mail.gemeinde.at"])
         assert result.provider == Provider.INDEPENDENT
-        # MX present, no SPF → 0.60
+        # Austrian MX host present, no SPF → 0.60
         assert result.confidence == pytest.approx(0.60)
 
     def test_mx_hosts_passthrough(self):
@@ -771,7 +767,7 @@ class TestClassify:
         with _patch_all_probes():
             result = await classify("example.com")
 
-        assert result.provider == Provider.INDEPENDENT
+        assert result.provider == Provider.UNKNOWN
         assert result.confidence == 0.0
 
     async def test_gateway_scenario(self):
@@ -1119,6 +1115,37 @@ class TestRuleHitCounting:
         for _ in range(3):
             _aggregate(evidence)
         assert _rule_hits["mx_only"] == 3
+
+    async def test_asn_deduplication(self):
+        """Four MX hosts all on MS365 ASN must produce one ASN evidence entry."""
+        mx_ev = [
+            Evidence(
+                kind=SignalKind.MX,
+                provider=Provider.MS365,
+                weight=WEIGHTS[SignalKind.MX],
+                detail="MX match",
+                raw="example-com.mail.protection.outlook.com",
+            )
+        ]
+        # Simulate probe_asn returning one entry per MX host (4 duplicates)
+        asn_ev = [
+            Evidence(
+                kind=SignalKind.ASN,
+                provider=Provider.MS365,
+                weight=WEIGHTS[SignalKind.ASN],
+                detail=f"ASN 8075 on mx{i}.example.com",
+                raw="8075",
+            )
+            for i in range(4)
+        ]
+
+        with _patch_all_probes(probe_mx=mx_ev, probe_asn=asn_ev):
+            result = await classify("example.com")
+
+        asn_entries = [e for e in result.evidence if e.kind == SignalKind.ASN]
+        assert len(asn_entries) == 1, (
+            f"Expected 1 ASN entry after dedup, got {len(asn_entries)}"
+        )
 
     async def test_classify_many_summary(self, caplog):
         from mail_sovereignty.models import ClassificationResult

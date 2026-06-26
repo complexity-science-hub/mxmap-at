@@ -46,7 +46,7 @@ class TestMatchPatterns:
 
 class TestSignatures:
     def test_number_of_providers(self):
-        assert len(SIGNATURES) == 7
+        assert len(SIGNATURES) == 33
 
     def test_providers_covered(self):
         providers = {s.provider for s in SIGNATURES}
@@ -58,6 +58,32 @@ class TestSignatures:
             Provider.GEMDAT,
             Provider.RIS,
             Provider.EASYNAME,
+            Provider.POST,
+            Provider.ASP_BGLD,
+            Provider.W4YMAIL,
+            Provider.BON,
+            Provider.WIEN,
+            Provider.CNV,
+            Provider.SALZBURG,
+            Provider.WVNET,
+            Provider.MAGENTA,
+            Provider.NET4YOU,
+            Provider.KAS,
+            Provider.MYMAILWALL,
+            Provider.SECURE_SHIELD,
+            Provider.KABELPLUS,
+            Provider.CABLELINK,
+            Provider.NODE4WEB,
+            Provider.HIWAY,
+            Provider.MYNET,
+            Provider.LGBS,
+            Provider.FLASHNET,
+            Provider.STYRION,
+            Provider.VIENNAWEB,
+            Provider.RIEPERT,
+            Provider.HALLO_CLOUD,
+            Provider.AGENTURSERVER,
+            Provider.IONOS,
         }
 
     def test_ms365_has_mx(self):
@@ -98,9 +124,11 @@ class TestSignatures:
         ms365 = next(s for s in SIGNATURES if s.provider == Provider.MS365)
         assert "rua.agari.com" in ms365.dmarc_patterns
 
-    def test_all_have_spf(self):
+    def test_all_have_mx_or_spf(self):
         for sig in SIGNATURES:
-            assert len(sig.spf_includes) > 0, f"{sig.provider} has no SPF includes"
+            assert len(sig.mx_patterns) > 0 or len(sig.spf_includes) > 0, (
+                f"{sig.provider} has neither MX patterns nor SPF includes"
+            )
 
     def test_ms365_smtp_banner_patterns(self):
         ms365 = next(s for s in SIGNATURES if s.provider == Provider.MS365)

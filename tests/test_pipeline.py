@@ -7,6 +7,9 @@ import pytest
 
 from mail_sovereignty.pipeline import (
     PROVIDER_OUTPUT_NAMES,
+    _apply_resolve_caps,
+    _detect_domain_flags,
+    _is_reject_all_spf,
     _minify_for_frontend,
     _output_provider,
     _serialize_result,
@@ -14,6 +17,109 @@ from mail_sovereignty.pipeline import (
 )
 from mail_sovereignty.models import ClassificationResult, Evidence, Provider, SignalKind
 from mail_sovereignty.probes import WEIGHTS
+
+
+class TestIsRejectAllSpf:
+    def test_bare_reject_all(self):
+        assert _is_reject_all_spf("v=spf1 -all")
+
+    def test_softfail_all(self):
+        assert _is_reject_all_spf("v=spf1 ~all")
+
+    def test_with_include_not_flagged(self):
+        assert not _is_reject_all_spf("v=spf1 include:a1.net -all")
+
+    def test_with_ip4_not_flagged(self):
+        assert not _is_reject_all_spf("v=spf1 ip4:1.2.3.4 -all")
+
+    def test_with_mx_not_flagged(self):
+        assert not _is_reject_all_spf("v=spf1 mx -all")
+
+    def test_empty_string(self):
+        assert not _is_reject_all_spf("")
+
+
+class TestApplyResolveCaps:
+    def test_sources_disagree_caps_at_90(self):
+        assert _apply_resolve_caps(95.0, ["sources_disagree"]) == 90.0
+
+    def test_single_source_caps_at_80(self):
+        assert _apply_resolve_caps(100.0, ["single_source"]) == 80.0
+
+    def test_domain_mismatch_caps_at_70(self):
+        assert _apply_resolve_caps(90.0, ["domain_mismatch"]) == 70.0
+
+    def test_lowest_cap_wins(self):
+        assert (
+            _apply_resolve_caps(100.0, ["sources_disagree", "domain_mismatch"]) == 70.0
+        )
+
+    def test_no_flags_no_cap(self):
+        assert _apply_resolve_caps(100.0, []) == 100.0
+
+    def test_confidence_already_below_cap_unchanged(self):
+        assert _apply_resolve_caps(60.0, ["sources_disagree"]) == 60.0
+
+    def test_unknown_flag_ignored(self):
+        assert _apply_resolve_caps(100.0, ["some_other_flag"]) == 100.0
+
+    def test_cap_applied_in_serialize_result(self):
+        result = ClassificationResult(
+            provider=Provider.MS365,
+            confidence=1.0,
+            evidence=[],
+            mx_hosts=["mx.example.com"],
+        )
+        entry = {
+            "gkz": "1",
+            "name": "Test",
+            "domain": "test.at",
+            "flags": ["sources_disagree"],
+        }
+        out = _serialize_result(entry, result)
+        assert out["classification_confidence"] == 90.0
+
+    def test_single_source_cap_in_serialize_result(self):
+        result = ClassificationResult(
+            provider=Provider.MS365,
+            confidence=1.0,
+            evidence=[],
+            mx_hosts=["mx.example.com"],
+        )
+        entry = {
+            "gkz": "1",
+            "name": "Test",
+            "domain": "test.at",
+            "flags": ["single_source"],
+        }
+        out = _serialize_result(entry, result)
+        assert out["classification_confidence"] == 80.0
+
+
+class TestDetectDomainFlags:
+    def test_localhost_mx(self):
+        assert _detect_domain_flags(["localhost"], "") == ["invalid_mx"]
+
+    def test_empty_string_mx(self):
+        assert _detect_domain_flags([""], "") == ["invalid_mx"]
+
+    def test_mixed_mx_not_flagged(self):
+        assert _detect_domain_flags(["localhost", "mx.real.at"], "") == []
+
+    def test_no_mx_not_flagged(self):
+        assert _detect_domain_flags([], "") == []
+
+    def test_reject_all_spf(self):
+        assert _detect_domain_flags([], "v=spf1 -all") == ["reject_all_spf"]
+
+    def test_both_flags(self):
+        assert _detect_domain_flags(["localhost"], "v=spf1 -all") == [
+            "invalid_mx",
+            "reject_all_spf",
+        ]
+
+    def test_clean_domain_no_flags(self):
+        assert _detect_domain_flags(["mx.a1.net"], "v=spf1 include:a1.net -all") == []
 
 
 class TestProviderOutputNames:
@@ -95,6 +201,75 @@ class TestSerializeResult:
         out = _serialize_result(entry, result)
         assert "gateway" not in out
 
+    def test_domain_inactive_localhost_mx(self):
+        result = ClassificationResult(
+            provider=Provider.INDEPENDENT,
+            confidence=0.92,
+            evidence=[],
+            mx_hosts=["localhost"],
+            spf_raw="",
+        )
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
+        out = _serialize_result(entry, result)
+        assert out["provider"] == "unknown"
+        assert out["category"] == "unknown"
+        assert out["classification_confidence"] == 0.0
+        assert out["classification_signals"] == []
+        assert out["domain_flags"] == ["domain_inactive"]
+
+    def test_domain_inactive_empty_mx(self):
+        result = ClassificationResult(
+            provider=Provider.INDEPENDENT,
+            confidence=0.6,
+            evidence=[],
+            mx_hosts=[""],
+            spf_raw="",
+        )
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
+        out = _serialize_result(entry, result)
+        assert out["domain_flags"] == ["domain_inactive"]
+        assert out["provider"] == "unknown"
+
+    def test_domain_inactive_reject_all_spf(self):
+        result = ClassificationResult(
+            provider=Provider.INDEPENDENT,
+            confidence=0.9,
+            evidence=[],
+            mx_hosts=[],
+            spf_raw="v=spf1 -all",
+        )
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
+        out = _serialize_result(entry, result)
+        assert out["provider"] == "unknown"
+        assert out["category"] == "unknown"
+        assert out["classification_confidence"] == 0.0
+        assert out["domain_flags"] == ["domain_inactive"]
+
+    def test_domain_inactive_both_conditions(self):
+        result = ClassificationResult(
+            provider=Provider.MS365,
+            confidence=0.92,
+            evidence=[],
+            mx_hosts=["localhost"],
+            spf_raw="v=spf1 -all",
+        )
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
+        out = _serialize_result(entry, result)
+        assert out["provider"] == "unknown"
+        assert out["domain_flags"] == ["domain_inactive"]
+
+    def test_domain_flags_omitted_when_clean(self):
+        result = ClassificationResult(
+            provider=Provider.A1,
+            confidence=0.9,
+            evidence=[],
+            mx_hosts=["mx.a1.net"],
+            spf_raw="v=spf1 include:a1.net -all",
+        )
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
+        out = _serialize_result(entry, result)
+        assert "domain_flags" not in out
+
     def test_resolve_fields_passthrough(self):
         result = ClassificationResult(
             provider=Provider.INDEPENDENT,
@@ -112,6 +287,90 @@ class TestSerializeResult:
         out = _serialize_result(entry, result)
         assert out["sources_detail"] == {"scrape": ["test.at"]}
         assert out["resolve_flags"] == ["gkz_only"]
+
+    def test_same_provider_signals_count(self):
+        """Signals whose provider matches the winner are marked counts_toward_confidence=True."""
+        result = ClassificationResult(
+            provider=Provider.MS365,
+            confidence=0.9,
+            evidence=[
+                Evidence(
+                    kind=SignalKind.MX,
+                    provider=Provider.MS365,
+                    weight=WEIGHTS[SignalKind.MX],
+                    detail="MX match",
+                    raw="mail.protection.outlook.com",
+                ),
+                Evidence(
+                    kind=SignalKind.SPF,
+                    provider=Provider.MS365,
+                    weight=WEIGHTS[SignalKind.SPF],
+                    detail="SPF match",
+                    raw="",
+                ),
+            ],
+            mx_hosts=["mail.protection.outlook.com"],
+        )
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
+        out = _serialize_result(entry, result)
+        assert all(s["counts_toward_confidence"] for s in out["classification_signals"])
+
+    def test_cross_provider_signals_do_not_count(self):
+        """ASN/TXT signals from a different provider are marked counts_toward_confidence=False."""
+        result = ClassificationResult(
+            provider=Provider.MS365,
+            confidence=0.9,
+            evidence=[
+                Evidence(
+                    kind=SignalKind.MX,
+                    provider=Provider.MS365,
+                    weight=WEIGHTS[SignalKind.MX],
+                    detail="MX match",
+                    raw="mail.protection.outlook.com",
+                ),
+                Evidence(
+                    kind=SignalKind.ASN,
+                    provider=Provider.AWS,
+                    weight=WEIGHTS[SignalKind.ASN],
+                    detail="ASN 16509 on mx2.example.com",
+                    raw="16509",
+                ),
+                Evidence(
+                    kind=SignalKind.TXT_VERIFICATION,
+                    provider=Provider.GOOGLE,
+                    weight=WEIGHTS[SignalKind.TXT_VERIFICATION],
+                    detail="google-site-verification token",
+                    raw="",
+                ),
+            ],
+            mx_hosts=["mail.protection.outlook.com"],
+        )
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
+        out = _serialize_result(entry, result)
+        by_kind = {s["kind"]: s for s in out["classification_signals"]}
+        assert by_kind["mx"]["counts_toward_confidence"] is True
+        assert by_kind["asn"]["counts_toward_confidence"] is False
+        assert by_kind["txt_verification"]["counts_toward_confidence"] is False
+
+    def test_independent_all_signals_count(self):
+        """For INDEPENDENT all signals feed _independent_confidence, so all are marked True."""
+        result = ClassificationResult(
+            provider=Provider.INDEPENDENT,
+            confidence=0.5,
+            evidence=[
+                Evidence(
+                    kind=SignalKind.ASN,
+                    provider=Provider.AUSTRIA_ISP,
+                    weight=WEIGHTS[SignalKind.ASN],
+                    detail="ASN 8447 (A1 Telekom Austria)",
+                    raw="8447",
+                ),
+            ],
+            mx_hosts=["mx.custom.at"],
+        )
+        entry = {"gkz": "1", "name": "Test", "domain": "test.at"}
+        out = _serialize_result(entry, result)
+        assert all(s["counts_toward_confidence"] for s in out["classification_signals"])
 
 
 class TestPipelineRun:
@@ -322,6 +581,7 @@ class TestMinifyForFrontend:
                             "provider": "microsoft",
                             "weight": 0.4,
                             "detail": "MX match",
+                            "counts_toward_confidence": True,
                         },
                     ],
                     "gateway": "seppmail",
@@ -340,10 +600,11 @@ class TestMinifyForFrontend:
         assert "sources_detail" not in entry
         assert "resolve_flags" not in entry
 
-        # Signal entries lack provider/weight
+        # Signal entries keep kind, detail, counts_toward_confidence; strip provider/weight
         sig = entry["classification_signals"][0]
         assert "provider" not in sig
         assert "weight" not in sig
+        assert sig["counts_toward_confidence"] is True
 
         # Top-level
         assert "total" not in mini
@@ -407,3 +668,47 @@ class TestPipelineLogging:
 
         assert any("Classifying" in msg for msg in caplog.messages)
         assert any("Wrote" in msg for msg in caplog.messages)
+
+    async def test_logs_independent_pattern_summary(
+        self, domains_json, tmp_path, caplog
+    ):
+        independent_result = ClassificationResult(
+            provider=Provider.INDEPENDENT,
+            confidence=0.94,
+            evidence=[
+                Evidence(
+                    kind=SignalKind.TENANT,
+                    provider=Provider.MS365,
+                    weight=WEIGHTS[SignalKind.TENANT],
+                    detail="MS365 tenant detected",
+                    raw="Managed",
+                ),
+                Evidence(
+                    kind=SignalKind.ASN,
+                    provider=Provider.AUSTRIA_ISP,
+                    weight=WEIGHTS[SignalKind.ASN],
+                    detail="ASN is Austrian ISP",
+                    raw="AS8447",
+                ),
+            ],
+            mx_hosts=["mail.cnv.at"],
+        )
+
+        async def fake_classify_many(domains, max_concurrency=20):
+            for d in domains:
+                yield d, independent_result
+
+        output_path = tmp_path / "data.json"
+        with patch(
+            "mail_sovereignty.pipeline.classify_many",
+            side_effect=fake_classify_many,
+        ):
+            await run(domains_json, output_path)
+
+        summary_msg = next(
+            msg for msg in caplog.messages if "Independent pattern summary" in msg
+        )
+        assert "microsoft:tenant" in summary_msg
+        assert "austria_isp:asn" in summary_msg
+        assert "asn+tenant" in summary_msg
+        assert "mail.cnv.at" in summary_msg
