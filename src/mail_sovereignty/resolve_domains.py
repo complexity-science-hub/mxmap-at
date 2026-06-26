@@ -20,6 +20,7 @@ from mail_sovereignty.constants import (
 )
 from mail_sovereignty.dns import lookup_mx
 
+
 def url_to_domain(url: str | None) -> str | None:
     """Extract the base domain from a URL or bare host string."""
     if not url:
@@ -29,6 +30,7 @@ def url_to_domain(url: str | None) -> str | None:
     if host.startswith("www."):
         host = host[4:]
     return host if host else None
+
 
 def _slugify(text: str) -> str:
     """Convert a pre-normalised string to a URL-safe slug."""
@@ -68,7 +70,7 @@ def _name_slugs(name: str) -> set[str]:
     if full_slug:
         slugs.add(full_slug)
         if full_slug.startswith("sankt-"):
-            slugs.add("st-" + full_slug[len("sankt-"):])
+            slugs.add("st-" + full_slug[len("sankt-") :])
     return slugs - {""}
 
 
@@ -128,7 +130,9 @@ def guess_domains(name: str, federal_state: str = "") -> list[str]:
     return sorted(candidates)
 
 
-def detect_domain_mismatch(name: str, website_domain: str, federal_state: str | None) -> bool:
+def detect_domain_mismatch(
+    name: str, website_domain: str, federal_state: str | None
+) -> bool:
     """Detect if a website domain doesn't match the municipality name or federal state."""
     if not name or not website_domain:
         return False
@@ -153,10 +157,12 @@ def detect_domain_mismatch(name: str, website_domain: str, federal_state: str | 
     # Strip common municipality prefixes before slug comparison.
     for prefix in ("stadt-", "gemeinde-", "marktg-", "markt-"):
         if domain_lower.startswith(prefix):
-            domain_lower = domain_lower[len(prefix):]
+            domain_lower = domain_lower[len(prefix) :]
             break
 
-    domain_base = domain_lower.rsplit(".", 1)[0] if "." in domain_lower else domain_lower
+    domain_base = (
+        domain_lower.rsplit(".", 1)[0] if "." in domain_lower else domain_lower
+    )
     domain_base_first = domain_base.split(".")[0]
 
     # Slug check — uses the same normalisation as guess_domains (St.→Sankt included).
@@ -169,7 +175,11 @@ def detect_domain_mismatch(name: str, website_domain: str, federal_state: str | 
     # retry with ≥3-char tokens so short but specific name components like
     # "laa" still catch their domain.
     normalised = _normalise_name(name)
-    long_words = [w for w in re.findall(r"[a-z]{4,}", normalised) if w not in MISMATCH_WORD_STOPLIST]
+    long_words = [
+        w
+        for w in re.findall(r"[a-z]{4,}", normalised)
+        if w not in MISMATCH_WORD_STOPLIST
+    ]
     for word in long_words:
         if word in domain_lower:
             return False
@@ -374,7 +384,9 @@ async def _collect_website_source_candidates(
     if not website_domain:
         return None, scrape_counts, redirect_counts
 
-    website_domains, redirect_domain = await scrape_email_domains(client, website_domain)
+    website_domains, redirect_domain = await scrape_email_domains(
+        client, website_domain
+    )
 
     for domain, count in website_domains.most_common():
         if await lookup_mx(domain):
@@ -397,9 +409,8 @@ def _add_scrape_candidates(
 ) -> None:
     for email_domain, count in scrape_counts.most_common():
         is_valid_kaernten_shared_email = (
-                federal_state == "Kärnten"
-                and email_domain == "ktn.gde.at"
-            )
+            federal_state == "Kärnten" and email_domain == "ktn.gde.at"
+        )
 
         if (
             detect_domain_mismatch(name, email_domain, federal_state)
@@ -445,7 +456,7 @@ def _add_redirect_candidates(
             continue
 
         sources[source_key].add(redirect_domain)
-        
+
 
 async def resolve_municipality_domain(
     municipality: dict[str, str],
@@ -465,7 +476,9 @@ async def resolve_municipality_domain(
 
     sources: dict[str, set[str]] = {source: set() for source in SOURCE_KEYS}
 
-    website_candidate_cache: dict[str, tuple[str | None, Counter[str], Counter[str]]] = {}
+    website_candidate_cache: dict[
+        str, tuple[str | None, Counter[str], Counter[str]]
+    ] = {}
 
     async def _get_cached(
         website_value: str | None,
@@ -474,30 +487,38 @@ async def resolve_municipality_domain(
         if not website_domain:
             return None, Counter(), Counter()
         if website_domain not in website_candidate_cache:
-            website_candidate_cache[website_domain] = await _collect_website_source_candidates(
-                client, website_domain
-            )
+            website_candidate_cache[
+                website_domain
+            ] = await _collect_website_source_candidates(client, website_domain)
         cached_domain, cached_sc, cached_rc = website_candidate_cache[website_domain]
         return cached_domain, Counter(cached_sc), Counter(cached_rc)
 
     def _downgrade(confidence: str) -> str:
-        return {"high": "medium", "medium": "low", "low": "low", "none": "none"}[confidence]
+        return {"high": "medium", "medium": "low", "low": "low", "none": "none"}[
+            confidence
+        ]
 
-    def _make_result(domain: str, source: str, confidence: str, flags: list[str]) -> dict[str, Any]:
+    def _make_result(
+        domain: str, source: str, confidence: str, flags: list[str]
+    ) -> dict[str, Any]:
         final_flags = list(flags)
         final_confidence = confidence
         if domain and source != "override":
             is_valid_kaernten = federal_state == "Kärnten" and domain == "ktn.gde.at"
-            if not is_valid_kaernten and detect_domain_mismatch(name, domain, federal_state):
+            if not is_valid_kaernten and detect_domain_mismatch(
+                name, domain, federal_state
+            ):
                 final_flags.append("domain_mismatch")
                 final_confidence = _downgrade(final_confidence)
-        entry.update({
-            "domain": domain,
-            "source": source,
-            "confidence": final_confidence,
-            "sources_detail": {k: sorted(v) for k, v in sources.items()},
-            "flags": final_flags,
-        })
+        entry.update(
+            {
+                "domain": domain,
+                "source": source,
+                "confidence": final_confidence,
+                "sources_detail": {k: sorted(v) for k, v in sources.items()},
+                "flags": final_flags,
+            }
+        )
         return entry
 
     domain_evidence: Counter[str] = Counter()
@@ -527,19 +548,30 @@ async def resolve_municipality_domain(
         sources["override"].add(override_domain)
         return _make_result(override_domain, "override", "high", [])
 
-    if override_website and override_website != override_domain and await lookup_mx(override_website):
+    if (
+        override_website
+        and override_website != override_domain
+        and await lookup_mx(override_website)
+    ):
         sources["override"].add(override_website)
         return _make_result(override_website, "override", "high", [])
 
     if override_website:
         _, sc, rc = await _get_cached(override_website)
         _add_scrape_candidates(
-            sources=sources, scrape_counts=sc, source_key="override_scrape",
-            name=name, federal_state=federal_state, evidence=domain_evidence,
+            sources=sources,
+            scrape_counts=sc,
+            source_key="override_scrape",
+            name=name,
+            federal_state=federal_state,
+            evidence=domain_evidence,
         )
         _add_redirect_candidates(
-            sources=sources, redirect_counts=rc, source_key="override_redirect",
-            name=name, federal_state=federal_state,
+            sources=sources,
+            redirect_counts=rc,
+            source_key="override_redirect",
+            name=name,
+            federal_state=federal_state,
         )
 
     # ── Step 2: Städtebund ────────────────────────────────────────────────────
@@ -553,12 +585,19 @@ async def resolve_municipality_domain(
     if website_sb:
         _, sb_sc, sb_rc = await _get_cached(website_sb)
         _add_scrape_candidates(
-            sources=sources, scrape_counts=sb_sc, source_key="staedtebund_scrape",
-            name=name, federal_state=federal_state, evidence=domain_evidence,
+            sources=sources,
+            scrape_counts=sb_sc,
+            source_key="staedtebund_scrape",
+            name=name,
+            federal_state=federal_state,
+            evidence=domain_evidence,
         )
         _add_redirect_candidates(
-            sources=sources, redirect_counts=sb_rc, source_key="staedtebund_redirect",
-            name=name, federal_state=federal_state,
+            sources=sources,
+            redirect_counts=sb_rc,
+            source_key="staedtebund_redirect",
+            name=name,
+            federal_state=federal_state,
         )
 
     # ── Step 3: Wikidata ──────────────────────────────────────────────────────
@@ -574,18 +613,27 @@ async def resolve_municipality_domain(
         sources["wikidata"].add(wd_domain)
 
     _add_scrape_candidates(
-        sources=sources, scrape_counts=wd_sc, source_key="wikidata_scrape",
-        name=name, federal_state=federal_state, evidence=domain_evidence,
+        sources=sources,
+        scrape_counts=wd_sc,
+        source_key="wikidata_scrape",
+        name=name,
+        federal_state=federal_state,
+        evidence=domain_evidence,
     )
     _add_redirect_candidates(
-        sources=sources, redirect_counts=wd_rc, source_key="wikidata_redirect",
-        name=name, federal_state=federal_state,
+        sources=sources,
+        redirect_counts=wd_rc,
+        source_key="wikidata_redirect",
+        name=name,
+        federal_state=federal_state,
     )
 
     # ── Step 4: Agreement check (before guessing) ─────────────────────────────
     override_family = sources["override_scrape"] | sources["override_redirect"]
     sb_family = sources["staedtebund_scrape"] | sources["staedtebund_redirect"]
-    wd_family = sources["wikidata"] | sources["wikidata_scrape"] | sources["wikidata_redirect"]
+    wd_family = (
+        sources["wikidata"] | sources["wikidata_scrape"] | sources["wikidata_redirect"]
+    )
 
     agreed = _two_families_agree([override_family, sb_family, wd_family])
     if agreed:
@@ -599,7 +647,9 @@ async def resolve_municipality_domain(
         if await lookup_mx(guess):
             sources["guess"].add(guess)
 
-    agreed = _two_families_agree([override_family, sb_family, wd_family, sources["guess"]])
+    agreed = _two_families_agree(
+        [override_family, sb_family, wd_family, sources["guess"]]
+    )
     if agreed:
         return _make_result(agreed, "source_agreement", "medium", [])
 
@@ -607,15 +657,24 @@ async def resolve_municipality_domain(
     for guess in sources["guess"]:
         _, sc, rc = await _get_cached(guess)
         _add_scrape_candidates(
-            sources=sources, scrape_counts=sc, source_key="guess_scrape",
-            name=name, federal_state=federal_state, evidence=domain_evidence,
+            sources=sources,
+            scrape_counts=sc,
+            source_key="guess_scrape",
+            name=name,
+            federal_state=federal_state,
+            evidence=domain_evidence,
         )
         _add_redirect_candidates(
-            sources=sources, redirect_counts=rc, source_key="guess_redirect",
-            name=name, federal_state=federal_state,
+            sources=sources,
+            redirect_counts=rc,
+            source_key="guess_redirect",
+            name=name,
+            federal_state=federal_state,
         )
 
-    guess_family = sources["guess"] | sources["guess_scrape"] | sources["guess_redirect"]
+    guess_family = (
+        sources["guess"] | sources["guess_scrape"] | sources["guess_redirect"]
+    )
     agreed = _two_families_agree([override_family, sb_family, wd_family, guess_family])
     if agreed:
         return _make_result(agreed, "source_agreement", "medium", [])
@@ -625,7 +684,9 @@ async def resolve_municipality_domain(
     # but couldn't agree. A lone trusted family plus guesses is single_source
     # (guesses don't count as a disagreeing party).
     trusted_families = [f for f in [override_family, sb_family, wd_family] if f]
-    fallback_flags = ["sources_disagree"] if len(trusted_families) >= 2 else ["single_source"]
+    fallback_flags = (
+        ["sources_disagree"] if len(trusted_families) >= 2 else ["single_source"]
+    )
 
     for key, tier_confidence in [
         ("override_scrape", "medium"),
@@ -641,7 +702,11 @@ async def resolve_municipality_domain(
     ]:
         if not sources[key]:
             continue
-        flags = ["guess_only"] if key.startswith("guess") and not trusted_families else fallback_flags
+        flags = (
+            ["guess_only"]
+            if key.startswith("guess") and not trusted_families
+            else fallback_flags
+        )
         return _make_result(_best(sources[key]), key, tier_confidence, flags)
 
     # ── Step 8: No winner ────────────────────────────────────────────────────

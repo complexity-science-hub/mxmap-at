@@ -93,40 +93,38 @@ NON_MUNICIPAL_DOMAIN_PATTERNS: tuple[str, ...] = (
 
 # Generic Austrian place-name components excluded from the word-level fallback
 # in detect_domain_mismatch — they appear in too many unrelated domains.
-MISMATCH_WORD_STOPLIST: frozenset[str] = frozenset({
-    "bach",
-    "berg",
-    "dorf",
-    "feld",
-    "kirche",
-    "markt",
-    "stein",
-    "stadt",
-    "wald",
-})
+MISMATCH_WORD_STOPLIST: frozenset[str] = frozenset(
+    {
+        "bach",
+        "berg",
+        "dorf",
+        "feld",
+        "kirche",
+        "markt",
+        "stein",
+        "stadt",
+        "wald",
+    }
+)
 
 SKIP_DOMAINS = {
     # Examples / placeholders
     "example.com",
     "example.at",
     "beispiel.at",
-
     # Web standards / schemas / framework noise
     "w3.org",
     "schema.org",
     "wordpress.org",
-
     # Google / analytics / calendar noise
     "google.com",
     "gstatic.com",
     "googleapis.com",
     "group.calendar.google.com",
-
     # Error monitoring / security / SaaS noise
     "sentry.io",
     "defiant.com",
     "schedulista.com",
-
     # Generic mail providers / personal mailbox providers
     "gmail.com",
     "gmx.at",
@@ -150,11 +148,9 @@ SKIP_DOMAINS = {
     "aon.cc",
     "chello.at",
     "utanet.at",
-
     # Generic telecom / ISP / hosting
     "a1.net",
     "domain.com",
-
     # Shared app / CMS / municipal-service platforms
     "citiesapps.com",
     "citiesapp.com",  # keep typo defensively
@@ -162,7 +158,6 @@ SKIP_DOMAINS = {
     "gemeinde24.at",
     "riskommunal.at",
     "oberoesterreich.at",
-
     # Federal/state/public bodies, not municipal domains
     "polizei.gv.at",
     "dsb.gv.at",
@@ -172,12 +167,10 @@ SKIP_DOMAINS = {
     "sozialministerium.gv.at",
     "gesundheitsministerium.gv.at",
     "volksanw.gv.at",
-
     # Education / school domains seen as false scrape candidates
     "bildungsserver.com",
     "noeschule.at",
     "musikschule.at",
-
     # Other recurring unrelated domains from scrape noise
     "dp-wired.de",
     "bzsv.at",
@@ -203,10 +196,6 @@ SOURCE_PRIORITY = [
     "guess_redirect",
 ]
 
-SOURCE_KEYS = [
-    source
-    for source in SOURCE_PRIORITY
-    if source != "source_agreement"
-]
+SOURCE_KEYS = [source for source in SOURCE_PRIORITY if source != "source_agreement"]
 
 CONCURRENCY_POSTPROCESS = 10

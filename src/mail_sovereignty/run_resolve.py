@@ -132,7 +132,9 @@ async def _load_json_from_path_or_url(source: Path | str) -> Any:
 def _iter_map_feature_properties(map_data: dict[str, Any]) -> list[dict[str, Any]]:
     """Return feature properties from either GeoJSON or TopoJSON."""
     if map_data.get("type") == "FeatureCollection":
-        return [feature.get("properties", {}) for feature in map_data.get("features", [])]
+        return [
+            feature.get("properties", {}) for feature in map_data.get("features", [])
+        ]
 
     if "objects" in map_data:
         topo_objects = map_data.get("objects", {})
@@ -147,7 +149,9 @@ def _iter_map_feature_properties(map_data: dict[str, Any]) -> list[dict[str, Any
                 None,
             )
         if obj is not None:
-            return [geometry.get("properties", {}) for geometry in obj.get("geometries", [])]
+            return [
+                geometry.get("properties", {}) for geometry in obj.get("geometries", [])
+            ]
 
     return []
 
@@ -161,10 +165,7 @@ async def load_map_municipalities(
 
     for props in _iter_map_feature_properties(map_data):
         gkz = _normalise_gkz(
-            props.get("iso")
-            or props.get("gkz")
-            or props.get("GKZ")
-            or props.get("id")
+            props.get("iso") or props.get("gkz") or props.get("GKZ") or props.get("id")
         )
         name = _clean_string(
             props.get("name")
@@ -192,7 +193,9 @@ async def load_map_municipalities(
         }
 
     if not municipalities:
-        raise ValueError(f"No municipalities found in map source {map_topojson_path_or_url}")
+        raise ValueError(
+            f"No municipalities found in map source {map_topojson_path_or_url}"
+        )
 
     return dict(sorted(municipalities.items(), key=lambda kv: int(kv[0])))
 
@@ -218,7 +221,9 @@ async def fetch_wikidata() -> dict[str, dict[str, str]]:
         "User-Agent": "MXmap/1.0 (https://github.com/davidhuser/mxmap)",
     }
     async with httpx.AsyncClient(timeout=120) as client:
-        response = await _fetch_sparql(client, SPARQL_URL, {"query": SPARQL_QUERY}, headers)
+        response = await _fetch_sparql(
+            client, SPARQL_URL, {"query": SPARQL_QUERY}, headers
+        )
         data = response.json()
 
     municipalities: dict[str, dict[str, str]] = {}
@@ -299,7 +304,9 @@ def merge_overrides_into_municipalities(
             logger.warning("Skipping override without GKZ: {}", override)
             continue
         if gkz not in municipalities:
-            logger.warning("Skipping override-only GKZ {}: not present in map base", gkz)
+            logger.warning(
+                "Skipping override-only GKZ {}: not present in map base", gkz
+            )
             continue
 
         entry = municipalities[gkz]
@@ -347,7 +354,9 @@ def merge_staedtebund_into_municipalities(
             logger.warning("Skipping Staedtebund row without GKZ: {}", row.to_dict())
             continue
         if gkz not in municipalities:
-            logger.warning("Skipping Staedtebund-only GKZ {}: not present in map base", gkz)
+            logger.warning(
+                "Skipping Staedtebund-only GKZ {}: not present in map base", gkz
+            )
             continue
 
         entry = municipalities[gkz]
@@ -373,7 +382,9 @@ def merge_wikidata_into_municipalities(
             logger.warning("Skipping Wikidata entry without GKZ: {}", wikidata_entry)
             continue
         if gkz not in municipalities:
-            logger.warning("Skipping Wikidata-only GKZ {}: not present in map base", gkz)
+            logger.warning(
+                "Skipping Wikidata-only GKZ {}: not present in map base", gkz
+            )
             continue
 
         entry = municipalities[gkz]
@@ -487,11 +498,8 @@ async def run(
                 entry.get("federal_state", ""),
                 entry.get("website", ""),
             )
-    
-    raw_override_gkz = {
-        _normalise_gkz(raw_gkz)
-        for raw_gkz, _ in raw_overrides.items()
-    }
+
+    raw_override_gkz = {_normalise_gkz(raw_gkz) for raw_gkz, _ in raw_overrides.items()}
     raw_override_gkz.discard("")
 
     override_only = raw_override_gkz - map_gkz
@@ -605,5 +613,3 @@ async def run(
 
     size_kb = len(json.dumps(output, ensure_ascii=False)) / 1024
     logger.info("Wrote {} ({} KB)", output_path, size_kb)
-
-    

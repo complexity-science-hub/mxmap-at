@@ -16,53 +16,53 @@ from .models import ClassificationResult, Provider
 
 
 # Map internal Provider enum values to data.json output names
-_PROVIDER_OUTPUT_NAMES: dict[str, str] = {
+PROVIDER_OUTPUT_NAMES: dict[str, str] = {
     "ms365": "microsoft",
 }
 
 _CATEGORY_MAP: dict[str, str] = {
     # US cloud — keys must match _output_provider() output, not raw enum values
-    "microsoft":      "us-cloud",
-    "google":         "us-cloud",
-    "aws":            "us-cloud",
+    "microsoft": "us-cloud",
+    "google": "us-cloud",
+    "aws": "us-cloud",
     # Named Austrian providers
-    "a1":             "austrian-based",
-    "gemdat":         "austrian-based",
-    "ris":            "austrian-based",
-    "easyname":       "austrian-based",
-    "austria_isp":    "austrian-based",
-    "post":           "austrian-based",
-    "asp_bgld":       "austrian-based",
-    "w4ymail":        "austrian-based",
-    "bon":            "austrian-based",
-    "wien":           "austrian-based",
-    "cnv":            "austrian-based",
-    "salzburg":       "austrian-based",
-    "wvnet":          "austrian-based",
-    "magenta":        "austrian-based",
-    "net4you":        "austrian-based",
-    "mymailwall":     "austrian-based",
-    "secure_shield":  "austrian-based",
-    "kabelplus":      "austrian-based",
-    "cablelink":      "austrian-based",
-    "node4web":       "austrian-based",
-    "hiway":          "austrian-based",
-    "mynet":          "austrian-based",
-    "lgbs":           "austrian-based",
-    "flashnet":       "austrian-based",
-    "styrion":        "austrian-based",
-    "viennaweb":      "austrian-based",
-    "riepert":        "austrian-based",
+    "a1": "austrian-based",
+    "gemdat": "austrian-based",
+    "ris": "austrian-based",
+    "easyname": "austrian-based",
+    "austria_isp": "austrian-based",
+    "post": "austrian-based",
+    "asp_bgld": "austrian-based",
+    "w4ymail": "austrian-based",
+    "bon": "austrian-based",
+    "wien": "austrian-based",
+    "cnv": "austrian-based",
+    "salzburg": "austrian-based",
+    "wvnet": "austrian-based",
+    "magenta": "austrian-based",
+    "net4you": "austrian-based",
+    "mymailwall": "austrian-based",
+    "secure_shield": "austrian-based",
+    "kabelplus": "austrian-based",
+    "cablelink": "austrian-based",
+    "node4web": "austrian-based",
+    "hiway": "austrian-based",
+    "mynet": "austrian-based",
+    "lgbs": "austrian-based",
+    "flashnet": "austrian-based",
+    "styrion": "austrian-based",
+    "viennaweb": "austrian-based",
+    "riepert": "austrian-based",
     # mostly german providers
-    "hallo_cloud":    "european-based", # dutch
-    "kas":            "european-based",   # German host but dominant in AT municipalities
-    "agenturserver":  "european-based",  # German provider, no AT presence
-    "ionos":          "european-based",  # German/pan-European, no AT presence
+    "hallo_cloud": "european-based",  # dutch
+    "kas": "european-based",  # German host but dominant in AT municipalities
+    "agenturserver": "european-based",  # German provider, no AT presence
+    "ionos": "european-based",  # German/pan-European, no AT presence
     # Self-hosted
-    "independent":    "austrian-based",   # Austrian signals confirmed, no named provider
+    "independent": "austrian-based",  # Austrian signals confirmed, no named provider
     # Cannot classify
-    "unresolved":     "unresolved",       # has mail infra, origin unclear
-    "unknown":        "unknown",          # no usable signals
+    "unresolved": "unresolved",  # has mail infra, origin unclear
+    "unknown": "unknown",  # no usable signals
 }
 
 
@@ -89,7 +89,7 @@ _RESOLVE_CONFIDENCE_CAPS: dict[str, float] = {
     "single_source": 80.0,
     "domain_mismatch": 70.0,
     "unresolved": 50.0,
-    "unknown":     0.0
+    "unknown": 0.0,
 }
 
 
@@ -119,7 +119,11 @@ def _detect_domain_flags(mx_hosts: list[str], spf_raw: str) -> list[str]:
 
 def _apply_resolve_caps(confidence: float, resolve_flags: list[str]) -> float:
     cap = min(
-        (_RESOLVE_CONFIDENCE_CAPS[f] for f in resolve_flags if f in _RESOLVE_CONFIDENCE_CAPS),
+        (
+            _RESOLVE_CONFIDENCE_CAPS[f]
+            for f in resolve_flags
+            if f in _RESOLVE_CONFIDENCE_CAPS
+        ),
         default=100.0,
     )
     return min(confidence, cap)
@@ -148,7 +152,7 @@ def _minify_for_frontend(full_output: dict[str, Any]) -> dict[str, Any]:
 
 def _output_provider(provider: Provider) -> str:
     """Map Provider enum to output name for data.json."""
-    return _PROVIDER_OUTPUT_NAMES.get(provider.value, provider.value)
+    return PROVIDER_OUTPUT_NAMES.get(provider.value, provider.value)
 
 
 def _serialize_result(
@@ -173,7 +177,7 @@ def _serialize_result(
         "classification_signals": [
             {
                 "kind": e.kind.value,
-                "provider": _PROVIDER_OUTPUT_NAMES.get(
+                "provider": PROVIDER_OUTPUT_NAMES.get(
                     e.provider.value, e.provider.value
                 ),
                 "weight": e.weight,
@@ -293,19 +297,27 @@ async def run(domains_path: Path, output_path: Path) -> None:
     for _p, _c in _CATEGORY_MAP.items():
         cat_providers.setdefault(_c, []).append(_p)
 
-    _CAT_ORDER = ["us-cloud", "austrian-based", "european-based", "unresolved", "unknown"]
+    _CAT_ORDER = [
+        "us-cloud",
+        "austrian-based",
+        "european-based",
+        "unresolved",
+        "unknown",
+    ]
     _CAT_LABELS = {
-        "us-cloud":        "US Cloud",
-        "austrian-based":  "Austrian Based",
+        "us-cloud": "US Cloud",
+        "austrian-based": "Austrian Based",
         "european-based": "European Based",
-        "unresolved":      "Unresolved",
-        "unknown":         "Unknown/No MX",
+        "unresolved": "Unresolved",
+        "unknown": "Unknown/No MX",
     }
     for _cat in _CAT_ORDER:
         _total = cat_counts.get(_cat, 0)
         _breakdown = "  ".join(
             f"{_p}={counts.get(_p, 0)}"
-            for _p in sorted(cat_providers.get(_cat, []), key=lambda p: -counts.get(p, 0))
+            for _p in sorted(
+                cat_providers.get(_cat, []), key=lambda p: -counts.get(p, 0)
+            )
             if counts.get(_p, 0) > 0
         )
         _label = _CAT_LABELS[_cat]

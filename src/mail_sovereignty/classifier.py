@@ -159,19 +159,27 @@ def _fallback_confidence(
     boost = len(extra_kinds) * _BOOST_PER_SIGNAL
 
     if provider == Provider.INDEPENDENT:
-        if has_mx and has_spf:   conf, name = min(1.0, 0.90 + boost), "ind_mx_spf"
-        elif has_mx:             conf, name = min(1.0, 0.60 + boost), "ind_mx_only"
-        elif evidence:           conf, name = min(1.0, 0.20 + boost), "ind_secondary"
-        else:                    conf, name = 0.0, "ind_none"
+        if has_mx and has_spf:
+            conf, name = min(1.0, 0.90 + boost), "ind_mx_spf"
+        elif has_mx:
+            conf, name = min(1.0, 0.60 + boost), "ind_mx_only"
+        elif evidence:
+            conf, name = min(1.0, 0.20 + boost), "ind_secondary"
+        else:
+            conf, name = 0.0, "ind_none"
     elif provider == Provider.UNRESOLVED:
-        if has_mx and has_spf:   conf, name = min(1.0, 0.50 + boost), "unresolved_mx_spf"
-        elif has_mx:             conf, name = min(1.0, 0.35 + boost), "unresolved_mx_only"
-        else:                    conf, name = 0.0, "ind_none"
+        if has_mx and has_spf:
+            conf, name = min(1.0, 0.50 + boost), "unresolved_mx_spf"
+        elif has_mx:
+            conf, name = min(1.0, 0.35 + boost), "unresolved_mx_only"
+        else:
+            conf, name = 0.0, "ind_none"
     else:  # UNKNOWN
         conf, name = 0.0, "ind_none"
 
     _rule_hits[name] += 1
     return conf, name
+
 
 def _is_austrian_independent(
     mx_hosts: list[str],
@@ -234,13 +242,19 @@ def _aggregate(
         confidence, rule_name = _rule_confidence(winner, by_provider[winner], gateway)
     elif _is_austrian_independent(mx_hosts or [], evidence, spf_raw):
         winner = Provider.INDEPENDENT
-        confidence, rule_name = _fallback_confidence(winner, _mx_hosts, spf_raw, evidence)
+        confidence, rule_name = _fallback_confidence(
+            winner, _mx_hosts, spf_raw, evidence
+        )
     elif mx_hosts:
         winner = Provider.UNRESOLVED
-        confidence, rule_name = _fallback_confidence(winner, _mx_hosts, spf_raw, evidence)
+        confidence, rule_name = _fallback_confidence(
+            winner, _mx_hosts, spf_raw, evidence
+        )
     else:
         winner = Provider.UNKNOWN
-        confidence, rule_name = _fallback_confidence(winner, _mx_hosts, spf_raw, evidence)
+        confidence, rule_name = _fallback_confidence(
+            winner, _mx_hosts, spf_raw, evidence
+        )
 
     return ClassificationResult(
         provider=winner,
