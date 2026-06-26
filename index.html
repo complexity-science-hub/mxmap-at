@@ -84,14 +84,18 @@
 document.addEventListener('DOMContentLoaded', function () {
 const COLOR_SCHEMES = {
   default: {
-    'us-cloud':      { high: '#ff9e91', medium: '#ffccaa', low: '#cccccc' },
-    'austrian-based': { high: '#88faaa', medium: '#daffc2', low: '#cccccc' },
+    'us-cloud':        { high: '#ff9e91', medium: '#ffccaa', low: '#ffdbde' },
+    'austrian-based':  { high: '#91ff9e', medium: '#aaffcb', low: '#dbffe9' },
+    'european-based': { high: '#a1b2ff', medium: '#c4cfff', low: '#e8ecff' },
+    'unresolved/unknown': { unresolved: '#cccccc', unknown: '#cccccc'},
     lake: '#a3cef1',
   },
   colorblind: {
-    'us-cloud':      { high: '#f1be61', medium: '#fde7c4', low: '#cccccc' },
-    'austrian-based': { high: '#6fa2d0', medium: '#C0D8E8', low: '#cccccc' },
-    lake: '#c4afff',
+    'us-cloud':        { high: '#f1be61', medium: '#fde7c4', low: '#fef5e7' },
+    'austrian-based':  { high: '#6fa2d0', medium: '#c0d8e8', low: '#ecf3f8' },
+    'european-based': { high: '#bfa5ff', medium: '#dbceff', low: '#f2eeff' },
+    'unresolved/unknown': { unresolved: '#cccccc', unknown: '#cccccc'},
+    'lake':            '#e1d7ff',
   },
 };
 var CATEGORY_COLORS = COLOR_SCHEMES.default;
@@ -109,17 +113,51 @@ const AUSTRIAN_STATES = {
   'Wien': '9'
 };
 const LABELS = {
-  microsoft:      'Microsoft 365',
-  google:         'Google Workspace',
-  aws:            'Amazon Web Services',
-  infomaniak:     'Infomaniak',
-  austrian_isp: 'Austrian ISP',
-  independent:  'Self-hosted / Other',
-  unknown:        'Unknown'
+  // US cloud
+  microsoft:     'Microsoft 365',
+  google:        'Google Workspace',
+  aws:           'Amazon Web Services',
+  // Austrian named providers
+  a1:            'A1 Telekom Austria',
+  post:          'Österreichische Post AG',
+  asp_bgld:      'ASP Burgenland',
+  w4ymail:       'w4ymail.at',
+  bon:           'BON.at',
+  wien:          'Wien Stadt',
+  cnv:           'CNV.at (Vorarlberg)',
+  salzburg:      'Salzburg AG',
+  wvnet:         'WVNET (Waldviertel)',
+  magenta:       'Magenta Telekom',
+  net4you:       'Net4You',
+  gemdat:        'GEMDAT NÖ',
+  ris:           'RIS.at',
+  easyname:      'easyname',
+  austria_isp:   'Austrian ISP',
+  mymailwall:    'mymailwall.at',
+  secure_shield: 'secure-shield.at',
+  kabelplus:     'kabelplus.at',
+  cablelink:     'cablelink.at',
+  node4web:      'node4web.at',
+  hiway:         'hiway.at',
+  mynet:         'mynet.at',
+  lgbs:          'LGBS (NÖ)',
+  flashnet:      'flashnet.at',
+  styrion:       'styrion.net',
+  viennaweb:     'viennaweb.at',
+  riepert:       'riepert.at',
+  independent:   'Self-hosted / Other',
+  // European
+  hallo_cloud:   'hallo.cloud (NL)',
+  kas:           'kasserver.com (DE)',
+  agenturserver: 'agenturserver.de (DE)',
+  ionos:         'IONOS (DE)',
+  // Unclassified
+  unresolved:    'Unresolved',
+  unknown:       'Unknown',
 };
 
 function effectiveCategory(m) {
-  if (!m || !m.category || m.category === 'unknown') return null;
+  if (!m || !m.category || m.category === 'unknown' || m.category === 'unresolved') return null;
   return m.category;
 }
 
@@ -394,37 +432,18 @@ async function loadData() {
   muni = dnsData.municipalities;
   showGenerated(dnsData);
 
-  //Log missing
-  const topoIds = new Set();
-  const missing = [];
-
-  const gemeinden = topojson.feature(topo, topo.objects.gemeinden);
-
-  for (const feature of gemeinden.features) {
-
-    const iso = String(feature.properties.iso);
-
-    topoIds.add(iso);
-
-    if (!muni[iso]) {
-      missing.push({
-        iso,
-        name: feature.properties.name || '(unknown)'
-      });
-    }
-  }
-
-  console.table(missing);
-  window.missingMunicipalities = missing;
-  //copy(JSON.stringify(window.missingMunicipalities, null, 2));
-
-
   // Count by jurisdiction and confidence level
-  const catCounts = { 'us-cloud': 0, 'austrian-based': 0 };
+  const catCounts = {
+    'us-cloud': 0,
+    'austrian-based': 0,
+    'european-based': 0,
+  };
   const levelCounts = {
     'us-cloud': { high: 0, medium: 0, low: 0 },
-    'austrian-based': { high: 0, medium: 0, low: 0 }
+    'austrian-based': { high: 0, medium: 0, low: 0 },
+    'european-based': { high: 0, medium: 0, low: 0 },
   };
+  let greyCount = 0;
 
   for (const iso of Object.keys(muni)) {
     const m = muni[iso];
@@ -433,6 +452,8 @@ async function loadData() {
       catCounts[cat]++;
       const level = confidenceLevel(m ? (m.classification_confidence || 0) : 0);
       if (level !== 'insufficient') levelCounts[cat][level]++;
+    } else if (m && (m.category === 'unresolved' || m.category === 'unknown')) {
+      greyCount++;
     }
   }
 
@@ -447,6 +468,10 @@ async function loadData() {
       '<div class="legend-content">' +
       legendCategoryHtml('US Cloud', CATEGORY_COLORS['us-cloud'], catCounts['us-cloud'], 'us-cloud', levelCounts['us-cloud']) +
       legendCategoryHtml('Austrian Based', CATEGORY_COLORS['austrian-based'], catCounts['austrian-based'], 'austrian-based', levelCounts['austrian-based']) +
+      legendCategoryHtml('European Based', CATEGORY_COLORS['european-based'], catCounts['european-based'], 'european-based', levelCounts['european-based']) +
+      '<div class="legend-group legend-other">' +
+      '<i class="legend-swatch" style="background:#cccccc"></i>Unresolved / Unknown (' + greyCount + ')<br>' +
+      '</div>' +
       '<div class="legend-group legend-other">' +
       '<i class="legend-swatch" data-lake="1" style="background:' + CATEGORY_COLORS.lake + '"></i>Lake (not a municipality)' +
       '</div>' +
@@ -528,7 +553,7 @@ async function loadData() {
       }
 
       const eName = escapeHtml(m.name);
-      const stateCode = AUSTRIAN_STATES[m.state] || '';
+      const stateCode = AUSTRIAN_STATES[m.federal_state] || '';
       const nameDisplay = stateCode ? `${eName} (${stateCode})` : eName;
       const eDomain = escapeHtml(m.domain || 'unknown');
       const eLabel = escapeHtml(label);

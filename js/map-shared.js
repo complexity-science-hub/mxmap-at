@@ -98,7 +98,6 @@ function addLakes(map, topo, lakeColor) {
 
 async function fetchMapData() {
   var responses = await Promise.all([
-    //fetch('https://unpkg.com/swiss-maps@4.7.0/2026/ch-combined.json'),
     fetch('https://raw.githubusercontent.com/ginseng666/GeoJSON-TopoJSON-Austria/refs/heads/master/2021/simplified-99.9/gemeinden_999_topo.json'),
     fetch('./data/data.min.json')
   ]);
