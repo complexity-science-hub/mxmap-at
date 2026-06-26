@@ -1,525 +1,361 @@
 {
-  "40835": {
-    "name": "Peuerbach",
-    "federal_state": "Oberösterreich",
-    "website": "https://peuerbach.at",
-    "gkz": "40835"
-  },
-  "41345": {
-    "name": "Helfenberg",
-    "federal_state": "Oberösterreich",
-    "website": "https://helfenberg.at",
-    "gkz": "41345"
-  },
-  "41628": {
-    "name": "Vorderweißenbach",
-    "federal_state": "Oberösterreich",
-    "website": "https://vorderweissenbach.at",
-    "gkz": "41628"
-  },
-  "61060": {
-    "name": "Sankt Veit in der Südsteiermark",
-    "federal_state": "Steiermark",
-    "website": "https://st-veit-suedsteiermark.gv.at",
-    "gkz": "61060"
-  },
-  "61120": {
-    "name": "Trofaiach",
-    "federal_state": "Steiermark",
-    "website": "https://trofaiach.gv.at",
-    "gkz": "61120"
-  },
-  "62007": {
-    "name": "Fohnsdorf",
-    "federal_state": "Steiermark",
-    "website": "https://fohnsdorf.at",
-    "gkz": "62007"
-  },
-  "62008": {
-    "name": "Gaal",
-    "federal_state": "Steiermark",
-    "website": "https://gaal.gv.at",
-    "gkz": "62008"
-  },
-  "62014": {
-    "name": "Kobenz",
-    "federal_state": "Steiermark",
-    "website": "https://kobenz.gv.at",
-    "gkz": "62014"
-  },
-  "62021": {
-    "name": "Pusterwald",
-    "federal_state": "Steiermark",
-    "website": "https://pusterwald.steiermark.at",
-    "gkz": "62021"
-  },
-  "62026": {
-    "name": "Sankt Georgen ob Judenburg",
-    "federal_state": "Steiermark",
-    "website": "https://st-georgen-judenburg.gv.at",
-    "gkz": "62026"
-  },
-  "62032": {
-    "name": "Sankt Peter ob Judenburg",
-    "federal_state": "Steiermark",
-    "website": "https://st-peter-judenburg.gv.at",
-    "gkz": "62032"
-  },
-  "62034": {
-    "name": "Seckau",
-    "federal_state": "Steiermark",
-    "website": "https://seckau.gv.at",
-    "gkz": "62034"
-  },
-  "62036": {
-    "name": "Unzmarkt-Frauenburg",
-    "federal_state": "Steiermark",
-    "website": "https://unzmarkt-frauenburg.at",
-    "gkz": "62036"
-  },
-  "62038": {
-    "name": "Zeltweg",
-    "federal_state": "Steiermark",
-    "website": "https://zeltweg.gv.at",
-    "gkz": "62038"
-  },
-  "62105": {
-    "name": "Breitenau am Hochlantsch",
-    "federal_state": "Steiermark",
-    "website": "https://breitenau-hochlantsch.at",
-    "gkz": "62105"
-  },
-  "62115": {
-    "name": "Krieglach",
-    "federal_state": "Steiermark",
-    "website": "https://krieglach.at",
-    "gkz": "62115"
-  },
-  "62116": {
-    "name": "Langenwang",
-    "federal_state": "Steiermark",
-    "website": "https://langenwang.gv.at",
-    "gkz": "62116"
-  },
-  "62125": {
-    "name": "Pernegg an der Mur",
-    "federal_state": "Steiermark",
-    "website": "https://pernegg.at",
-    "gkz": "62125"
-  },
-  "62128": {
-    "name": "Sankt Lorenzen im Mürztal",
-    "federal_state": "Steiermark",
-    "website": "https://stlorenzen.at",
-    "gkz": "62128"
-  },
-  "62131": {
-    "name": "Spital am Semmering",
-    "federal_state": "Steiermark",
-    "website": "https://spital-semmering.gv.at",
-    "gkz": "62131"
-  },
-  "62132": {
-    "name": "Stanz im Mürztal",
-    "federal_state": "Steiermark",
-    "website": "https://stanz.at",
-    "gkz": "62132"
-  },
-  "62135": {
-    "name": "Turnau",
-    "federal_state": "Steiermark",
-    "website": "https://turnau.at",
-    "gkz": "62135"
-  },
-  "62202": {
-    "name": "Bad Blumau",
-    "federal_state": "Steiermark",
-    "website": "https://bad-blumau.gv.at",
-    "gkz": "62202"
-  },
-  "62206": {
-    "name": "Burgau",
-    "federal_state": "Steiermark",
-    "website": "https://burgau.steiermark.at",
-    "gkz": "62206"
-  },
-  "62209": {
-    "name": "Ebersdorf",
-    "federal_state": "Steiermark",
-    "website": "https://ebersdorf.gv.at",
-    "gkz": "62209"
-  },
-  "62211": {
-    "name": "Friedberg",
-    "federal_state": "Steiermark",
-    "website": "https://friedberg.at",
-    "gkz": "62211"
-  },
-  "62214": {
-    "name": "Greinbach",
-    "federal_state": "Steiermark",
-    "website": "https://greinbach.steiermark.at",
-    "gkz": "62214"
-  },
-  "62216": {
-    "name": "Großsteinbach",
-    "federal_state": "Steiermark",
-    "website": "https://grosssteinbach.gv.at",
-    "gkz": "62216"
-  },
-  "62219": {
-    "name": "Hartberg",
-    "federal_state": "Steiermark",
-    "website": "https://hartberg.at",
-    "gkz": "62219"
-  },
-  "62220": {
-    "name": "Hartberg Umgebung",
-    "federal_state": "Steiermark",
-    "website": "https://hartberg-umgebung.gv.at",
-    "gkz": "62220"
-  },
-  "62226": {
-    "name": "Lafnitz",
-    "federal_state": "Steiermark",
-    "website": "https://lafnitz.gv.at",
-    "gkz": "62226"
-  },
-  "62232": {
-    "name": "Ottendorf an der Rittschein",
-    "federal_state": "Steiermark",
-    "website": "https://ottendorf.at",
-    "gkz": "62232"
-  },
-  "62233": {
-    "name": "Pinggau",
-    "federal_state": "Steiermark",
-    "website": "https://pinggau.gv.at",
-    "gkz": "62233"
-  },
-  "62235": {
-    "name": "Pöllauberg",
-    "federal_state": "Steiermark",
-    "website": "https://poellauberg.gv.at",
-    "gkz": "62235"
-  },
-  "62242": {
-    "name": "Sankt Jakob im Walde",
-    "federal_state": "Steiermark",
-    "website": "https://sankt-jakob.at",
-    "gkz": "62242"
-  },
-  "62244": {
-    "name": "Sankt Johann in der Haide",
-    "federal_state": "Steiermark",
-    "website": "https://st-johann-haide.gv.at",
-    "gkz": "62244"
-  },
-  "62245": {
-    "name": "Sankt Lorenzen am Wechsel",
-    "federal_state": "Steiermark",
-    "website": "https://st-lorenzen-wechsel.gv.at",
-    "gkz": "62245"
-  },
-  "62247": {
-    "name": "Schäffern",
-    "federal_state": "Steiermark",
-    "website": "https://schaeffern.gv.at",
-    "gkz": "62247"
-  },
-  "62252": {
-    "name": "Söchau",
-    "federal_state": "Steiermark",
-    "website": "https://soechau.gv.at",
-    "gkz": "62252"
-  },
-  "62256": {
-    "name": "Stubenberg",
-    "federal_state": "Steiermark",
-    "website": "https://stubenberg.gv.at",
-    "gkz": "62256"
-  },
-  "62262": {
-    "name": "Wenigzell",
-    "federal_state": "Steiermark",
-    "website": "https://wenigzell.at",
-    "gkz": "62262"
-  },
-  "62311": {
-    "name": "Edelsbach bei Feldbach",
-    "federal_state": "Steiermark",
-    "website": "https://edelsbach.at",
-    "gkz": "62311"
-  },
-  "62314": {
-    "name": "Eichkögl",
-    "federal_state": "Steiermark",
-    "website": "https://eichkoegl.gv.at",
-    "gkz": "62314"
-  },
-  "62326": {
-    "name": "Halbenrain",
-    "federal_state": "Steiermark",
-    "website": "https://halbenrain.gv.at",
-    "gkz": "62326"
-  },
-  "62330": {
-    "name": "Jagerberg",
-    "federal_state": "Steiermark",
-    "website": "https://jagerberg.info",
-    "gkz": "62330"
-  },
-  "62332": {
-    "name": "Kapfenstein",
-    "federal_state": "Steiermark",
-    "website": "https://kapfenstein.at",
-    "gkz": "62332"
-  },
-  "62335": {
-    "name": "Klöch",
-    "federal_state": "Steiermark",
-    "website": "https://kloech.gv.at",
-    "gkz": "62335"
-  },
-  "62343": {
-    "name": "Mettersdorf am Saßbach",
-    "federal_state": "Steiermark",
-    "website": "https://mettersdorf.com",
-    "gkz": "62343"
-  },
-  "62368": {
-    "name": "Tieschen",
-    "federal_state": "Steiermark",
-    "website": "https://tieschen.gv.at",
-    "gkz": "62368"
-  },
-  "62372": {
-    "name": "Unterlamm",
-    "federal_state": "Steiermark",
-    "website": "https://unterlamm.gv.at",
-    "gkz": "62372"
-  },
   "90101": {
     "name": "Wien - Innere Stadt",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90101"
+    "reason": "Override for Wien"
   },
   "90201": {
     "name": "Wien - Leopoldstadt",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90201"
+    "reason": "Override for Wien"
   },
   "90301": {
     "name": "Wien - Landstraße",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90301"
+    "reason": "Override for Wien"
   },
   "90401": {
     "name": "Wien - Wieden",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90401"
+    "reason": "Override for Wien"
   },
   "90501": {
     "name": "Wien - Margareten",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90501"
+    "reason": "Override for Wien"
   },
   "90601": {
     "name": "Wien - Mariahilf",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90601"
+    "reason": "Override for Wien"
   },
   "90701": {
     "name": "Wien - Neubau",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90701"
+    "reason": "Override for Wien"
   },
   "90801": {
     "name": "Wien - Josefstadt",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90801"
+    "reason": "Override for Wien"
   },
   "90901": {
     "name": "Wien - Alsergrund",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "90901"
+    "reason": "Override for Wien"
   },
   "91001": {
     "name": "Wien - Favoriten",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91001"
+    "reason": "Override for Wien"
   },
   "91101": {
     "name": "Wien - Simmering",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91101"
+    "reason": "Override for Wien"
   },
   "91201": {
     "name": "Wien - Meidling",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91201"
+    "reason": "Override for Wien"
   },
   "91301": {
     "name": "Wien - Hietzing",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91301"
+    "reason": "Override for Wien"
   },
   "91401": {
     "name": "Wien - Penzing",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91401"
+    "reason": "Override for Wien"
   },
   "91501": {
     "name": "Wien - Rudolfsheim-Fünfhaus",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91501"
+    "reason": "Override for Wien"
   },
   "91601": {
     "name": "Wien - Ottakring",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91601"
+    "reason": "Override for Wien"
   },
   "91701": {
     "name": "Wien - Hernals",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91701"
+    "reason": "Override for Wien"
   },
   "91801": {
     "name": "Wien - Währing",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91801"
+    "reason": "Override for Wien"
   },
   "91901": {
     "name": "Wien - Döbling",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "91901"
+    "reason": "Override for Wien"
   },
   "92001": {
     "name": "Wien - Brigittenau",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "92001"
+    "reason": "Override for Wien"
   },
   "92101": {
     "name": "Wien - Floridsdorf",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "92101"
+    "reason": "Override for Wien"
   },
   "92201": {
     "name": "Wien - Donaustadt",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "92201"
+    "reason": "Override for Wien"
   },
   "92301": {
     "name": "Wien - Liesing",
     "federal_state": "Wien",
     "website": "https://wien.gv.at",
-    "gkz": "92301"
+    "reason": "Override for Wien"
   },
-  "31001":{
-      "gkz":"31001",
-      "name":"Alberndorf im Pulkautal",
-      "federal_state":"Niederösterreich",
-      "website":"https://www.alberndorf-pulkautal.at/"
+  "41306": {
+    "name": "Atzesberg",
+    "domain": "atzesberg.ooe.gv.at",
+    "federal_state": "Oberösterreich",
+    "reason": "Shared administration for Atzesberg and Sarleinsbach"
   },
-  "30802":{
-      "gkz":"30802",
-      "name":"Andlersdorf",
-      "federal_state":"Niederösterreich",
-      "website":"https://andlersdorf.gem2go.at/"
+  "20415": {
+      "name": "Krumpendorf am Wörthersee",
+      "federal_state": "Kärnten",
+      "domain": "ktn.gde.at",
+      "reason": "Städtebund was outdated"
   },
-  "41308":{
-      "gkz":"41308",
-      "name":"Berg bei Rohrbach",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.rohrbach-berg.at/"
+  "10412": {
+      "gkz": "10412",
+      "name": "Ollersdorf im Burgenland",
+      "federal_state": "Burgenland",
+      "domain": "ollersdorf-burgenland.at",
+      "reason": "Scraped incorrect"
   },
-  "40602":{
-      "gkz":"40602",
-      "name":"Grünbach",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.gruenbach.ooe.gv.at/"
+  "10921": {
+    "name": "Rotenturm an der Pinka",
+    "federal_state": "Burgenland",
+    "website": "https://www.gemeinde-rotenturm.at/",
+    "reason": "Not found without override"
   },
-  "61761":{
-      "gkz":"61761",
-      "name":"Gutenberg-Stenzengreith",
-      "federal_state":"Steiermark",
-      "website":"https://gemeinde-gutenberg-stenzengreith.gemeindeinfo.app/"
-  },   
-  "70905":{
-      "gkz":"70905",
-      "name":"Buch bei Jenbach",
-      "federal_state":"Tirol",
-      "website":"https://www.buch-tirol.gv.at/"
+  "10413": {
+      "gkz": "10413",
+      "name": "Sankt Michael im Burgenland",
+      "federal_state": "Burgenland",
+      "website": "https://www.st.michael-bgld.at/",
+      "reason": "Not found without override"
   },
-  "41309":{
-      "gkz":"41309",
-      "name":"Haslach an der Mühl",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.haslach.ooe.gv.at/"
+  "20531": {
+      "gkz": "20531",
+      "name": "Weitensfeld im Gurktal",
+      "federal_state": "Kärnten",
+      "website": "https://weitensfeld.at/",
+      "reason": "Not found without override"
   },
-  "40610":{
-      "gkz":"40610",
-      "name":"Leopoldschlag",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.leopoldschlag.ooe.gv.at/"
+  "20813": {
+      "gkz": "20813",
+      "name": "St. Kanzian am Klopeiner See",
+      "federal_state": "Kärnten",
+      "website": "https://kanzian.at/",
+      "reason": "Not found without override"
   },
-  "40910":{
-      "gkz":"40910",
-      "name":"Nußbach",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.nussbach.ooe.gv.at/"
+  "31001": {
+      "gkz": "31001",
+      "name": "Alberndorf im Pulkautal",
+      "federal_state": "Niederösterreich",
+      "website": "https://www.alberndorf-pulkautal.at/",
+      "reason": "Not found without override"
   },
-  "41224":{
-      "gkz":"41224",
-      "name":"Reichersberg",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.reichersberg.at/"
+  "31235": {
+      "gkz": "31235",
+      "name": "Gerasdorf bei Wien",
+      "federal_state": "Niederösterreich",
+      "website": "https://www.gerasdorf-wien.gv.at/",
+      "reason": "Not found without override"
   },
-  "10921":{
-      "gkz":"10921",
-      "name":"Rotenturm an der Pinka",
-      "federal_state":"Burgenland",
-      "website":"https://www.gemeinde-rotenturm.at/"
+  "40626": {
+      "gkz": "40626",
+      "name": "Windhaag bei Freistadt",
+      "federal_state": "Oberösterreich",
+      "website": "https://www.windhaag-freistadt.ooe.gv.at/",
+      "reason": "Not found without override"
   },
-  "41428":{
-      "gkz":"41428",
-      "name":"Waldkirchen am Wesen",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.waldkirchen.ooe.gv.at/"
+  "41121": {
+      "gkz": "41121",
+      "name": "St. Nikola an der Donau",
+      "federal_state": "Oberösterreich",
+      "website": "https://www.st-nikola.at/",
+      "reason": "Not found without override"
   },
-  "20531":{
-      "gkz":"20531",
-      "name":"Weitensfeld im Gurktal",
-      "federal_state":"Kärnten",
-      "website":"https://weitensfeld.at/"
+  "41226": {
+    "gkz": "41226",
+    "name": "St. Georgen bei Obernberg am Inn",
+    "federal_state": "Oberösterreich",
+    "domain": "st-georgen-obernberg.ooe.gv.at",
+    "reason": "Not found without override"
   },
-  "40626":{
-      "gkz":"40626",
-      "name":"Windhaag bei Freistadt",
-      "federal_state":"Oberösterreich",
-      "website":"https://www.windhaag-freistadt.ooe.gv.at/"
+  "41309": {
+    "gkz": "41309",
+    "name": "Haslach an der Mühl",
+    "federal_state": "Oberösterreich",
+    "website": "https://www.haslach.ooe.gv.at/",
+    "reason": "Not found without override"
+  },
+  "41428": {
+    "gkz": "41428",
+    "name": "Waldkirchen am Wesen",
+    "federal_state": "Oberösterreich",
+    "website": "https://www.waldkirchen.ooe.gv.at/",
+    "reason": "Not found without override"
+  },
+  "41623": {
+    "gkz": "41623",
+    "name": "Sonnberg im Mühlkreis",
+    "federal_state": "Oberösterreich",
+    "website": "https://www.sonnberg.ooe.gv.at/",
+    "reason": "Not found without override"
+  },
+  "41734": {
+    "gkz": "41734",
+    "name": "St. Georgen im Attergau",
+    "federal_state": "Oberösterreich",
+    "website": "https://www.st-georgen-attergau.ooe.gv.at/",
+    "reason": "Not found without override"
+  },
+  "50212": {
+    "gkz": "50212",
+    "name": "Scheffau am Tennengebirge",
+    "federal_state": "Salzburg",
+    "website": "https://www.scheffau.gv.at/",
+    "reason": "Not found without override"
+  },
+  "50325": {
+    "gkz": "50325",
+    "name": "Nußdorf am Haunsberg",
+    "federal_state": "Salzburg",
+    "website": "https://www.nussdorf.at/",
+    "reason": "Not found without override"
+  },
+  "61761": {
+    "gkz": "61761",
+    "name": "Gutenberg-Stenzengreith",
+    "federal_state": "Steiermark",
+    "website": "https://www.gutenberg.gv.at/",
+    "reason": "Not found without override"
+  },
+  "62008": {
+    "gkz": "62008",
+    "name": "Gaal",
+    "federal_state": "Steiermark",
+    "website": "https://www.gaal.gv.at/",
+    "reason": "Not found without override"
+  },
+  "62014": {
+    "gkz": "62014",
+    "name": "Kobenz",
+    "federal_state": "Steiermark",
+    "website": "https://www.kobenz.gv.at/",
+    "reason": "Not found without override"
+  },
+  "62233": {
+    "gkz": "62233",
+    "name": "Pinggau",
+    "federal_state": "Steiermark",
+    "website": "https://pinggau.gv.at/",
+    "reason": "Not found without override"
+  },
+  "62245": {
+    "gkz": "62245",
+    "name": "Sankt Lorenzen am Wechsel",
+    "federal_state": "Steiermark",
+    "website": "https://www.st-lorenzen-wechsel.at/",
+    "reason": "Not found without override"
+  },
+  "70344": {
+    "gkz": "70344",
+    "name": "Reith bei Seefeld",
+    "federal_state": "Tirol",
+    "website": "https://www.reith-seefeld.at/",
+    "reason": "Not found without override"
+  },
+  "70347": {
+    "gkz": "70347",
+    "name": "St. Sigmund im Sellrain",
+    "federal_state": "Tirol",
+    "website": "https://www.st-sigmund.gv.at/",
+    "reason": "Not found without override"
+  },
+  "70355": {
+    "gkz": "70355",
+    "name": "Steinach am Brenner",
+    "federal_state": "Tirol",
+    "website": "https://www.steinach.gv.at/",
+    "reason": "Not found without override"
+  },
+  "70404": {
+    "gkz": "70404",
+    "name": "Going am Wilden Kaiser",
+    "federal_state": "Tirol",
+    "website": "https://www.going.gv.at/",
+    "reason": "Not found without override"
+  },
+  "70616": {
+    "gkz": "70616",
+    "name": "Pettneu am Arlberg",
+    "federal_state": "Tirol",
+    "website": "https://www.pettneu.gv.at/",
+    "reason": "Not found without override"
+  },
+  "70709": {
+    "gkz": "70709",
+    "name": "Hopfgarten in Defereggen",
+    "federal_state": "Tirol",
+    "domain": "defnet.at",
+    "reason": "Not found without override"
+  },
+  "70726": {
+    "gkz": "70726",
+    "name": "St. Veit in Defereggen",
+    "federal_state": "Tirol",
+    "domain": "st-veit-def.at",
+    "reason": "Not found without override"
+  },
+  "20519": {
+      "gkz": "20519",
+      "name": "Micheldorf",
+      "federal_state": "Kärnten",
+      "website": "https://www.micheldorf-gv.at/",
+      "reason": "Incorrect guess"
+  },
+  "40435": {
+      "gkz": "40435",
+      "name": "St. Georgen am Fillmannsbach",
+      "federal_state": "Oberösterreich",
+      "website": "https://www.st-georgen-fillmannsbach.at/",
+      "reason": "Not found without override"
   }
-  
 }

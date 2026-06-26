@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "mxmap"
 version = "0.1.0"
-description = "Interactive map showing where Swiss municipalities host their email"
+description = "Interactive map showing where Austrian municipalities host their email"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

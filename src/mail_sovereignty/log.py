@@ -48,7 +48,7 @@ def setup(verbose: bool = False) -> None:
         "mxmap.log",
         format=file_fmt,
         level="DEBUG",
-        rotation="100 MB",
+        rotation="20 MB",
         retention=3,
         encoding="utf-8",
     )

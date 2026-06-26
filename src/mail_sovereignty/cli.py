@@ -20,12 +20,9 @@ def extract_austria_municipalities() -> None:
 
 
 def resolve_domains() -> None:
-    from mail_sovereignty.resolve import run
+    from mail_sovereignty.run_resolve import run
 
     parser = argparse.ArgumentParser(description="Resolve municipality email domains")
-    parser.add_argument(
-        "--date", help="Municipality snapshot date (DD-MM-YYYY)", default=None
-    )
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="Enable debug logging"
     )
@@ -38,7 +35,6 @@ def resolve_domains() -> None:
             Path("data/municipality_domains.json"),
             Path("data/overrides.json"),
             Path("data/municipalities_gv_at.csv"),
-            date=args.date,
         )
     )
 

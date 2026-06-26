@@ -24,40 +24,40 @@ SELECT ?item ?itemLabel ?gkz ?website WHERE {
 ORDER BY xsd:integer(?gkz)
 """
 
+DEFAULT_MAP_TOPOJSON_URL = (
+    "https://raw.githubusercontent.com/ginseng666/GeoJSON-TopoJSON-Austria/"
+    "refs/heads/master/2021/simplified-99.9/gemeinden_999_topo.json"
+)
+
 EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
 TYPO3_RE = re.compile(
     r"linkTo_UnCryptMailto\((?:['\"]|%27|%22)([^'\"]+?)(?:['\"]|%27|%22)"
 )
 
-# TODO: Review for Austria
-SKIP_DOMAINS = {
-    "example.com",
-    "example.at",
-    "sentry.io",
-    "w3.org",
-    "gstatic.com",
-    "googleapis.com",
-    "schema.org",
-    # Generic email providers (not municipality-specific)
-    "gmail.com",
-    "hotmail.com",
-    "outlook.com",
-    "gmx.at",
-    "gmx.com",
-    "yahoo.com",
-    # Shared hosting / CMS / web agencies
-    "domain.com",
-    # Web framework / analytics
-    "google.com",
-    "group.calendar.google.com",
-    # Generic / unrelated services
-    "mail.com",
-    "wordpress.org",
-    "defiant.com",
-    "schedulista.com",
+GKZ_TO_STATE = {
+    "1": "Burgenland",
+    "2": "Kärnten",
+    "3": "Niederösterreich",
+    "4": "Oberösterreich",
+    "5": "Salzburg",
+    "6": "Steiermark",
+    "7": "Tirol",
+    "8": "Vorarlberg",
+    "9": "Wien",
 }
 
-# TODO: Review for Austria
+FEDERAL_STATES = {
+    "Burgenland": "bgld",
+    "Kärnten": "ktn",
+    "Niederösterreich": "noe",
+    "Oberösterreich": "ooe",
+    "Salzburg": "sbg",
+    "Steiermark": "stmk",
+    "Tirol": "tirol",
+    "Vorarlberg": "vbg",
+    "Wien": "wien",
+}
+
 SUBPAGES = [
     "/kontakt",
     "/contact",
@@ -71,16 +71,142 @@ SUBPAGES = [
     "/gemeinde",
 ]
 
-FEDERAL_STATES = {
-    "Burgenland": "burgenland",
-    "Kärnten": "kaernten",
-    "Niederösterreich": "niederoesterreich",
-    "Oberösterreich": "oberoesterreich",
-    "Salzburg": "salzburg",
-    "Steiermark": "steiermark",
-    "Tirol": "tirol",
-    "Vorarlberg": "vorarlberg",
-    "Wien": "wien",
+
+# Substrings that identify clearly non-municipal organisations; a domain
+# containing any of these is rejected outright by detect_domain_mismatch.
+NON_MUNICIPAL_DOMAIN_PATTERNS: tuple[str, ...] = (
+    "ff-",
+    "feuerwehr",
+    "apotheke",
+    "bestattung",
+    "musikverein",
+    "sportverein",
+    "sv-",
+    "usv-",
+    "hotel",
+    "gasthof",
+    "restaurant",
+    "wirt",
+    ".ksn.at",
+    "vs-",
+)
+
+# Generic Austrian place-name components excluded from the word-level fallback
+# in detect_domain_mismatch — they appear in too many unrelated domains.
+MISMATCH_WORD_STOPLIST: frozenset[str] = frozenset({
+    "bach",
+    "berg",
+    "dorf",
+    "feld",
+    "kirche",
+    "markt",
+    "stein",
+    "stadt",
+    "wald",
+})
+
+SKIP_DOMAINS = {
+    # Examples / placeholders
+    "example.com",
+    "example.at",
+    "beispiel.at",
+
+    # Web standards / schemas / framework noise
+    "w3.org",
+    "schema.org",
+    "wordpress.org",
+
+    # Google / analytics / calendar noise
+    "google.com",
+    "gstatic.com",
+    "googleapis.com",
+    "group.calendar.google.com",
+
+    # Error monitoring / security / SaaS noise
+    "sentry.io",
+    "defiant.com",
+    "schedulista.com",
+
+    # Generic mail providers / personal mailbox providers
+    "gmail.com",
+    "gmx.at",
+    "gmx.com",
+    "gmx.net",
+    "gmx.info",
+    "hotmail.com",
+    "hotmail.de",
+    "outlook.com",
+    "outlook.de",
+    "outlook.at",
+    "outlook.co",
+    "icloud.com",
+    "yahoo.com",
+    "yahoo.de",
+    "web.de",
+    "t-online.de",
+    "live.de",
+    "mail.com",
+    "aon.at",
+    "aon.cc",
+    "chello.at",
+    "utanet.at",
+
+    # Generic telecom / ISP / hosting
+    "a1.net",
+    "domain.com",
+
+    # Shared app / CMS / municipal-service platforms
+    "citiesapps.com",
+    "citiesapp.com",  # keep typo defensively
+    "gem2go.info",
+    "gemeinde24.at",
+    "riskommunal.at",
+    "oberoesterreich.at",
+
+    # Federal/state/public bodies, not municipal domains
+    "polizei.gv.at",
+    "dsb.gv.at",
+    "usp.gv.at",
+    "brz.gv.at",
+    "bev.gv.at",
+    "sozialministerium.gv.at",
+    "gesundheitsministerium.gv.at",
+    "volksanw.gv.at",
+
+    # Education / school domains seen as false scrape candidates
+    "bildungsserver.com",
+    "noeschule.at",
+    "musikschule.at",
+
+    # Other recurring unrelated domains from scrape noise
+    "dp-wired.de",
+    "bzsv.at",
+    "appmea.com",
+    "cs4web.at",
+    "vhs-burgenland.at",
+    "tagesmuetter.co.at",
 }
+
+SOURCE_PRIORITY = [
+    "override",
+    "override_scrape",
+    "override_redirect",
+    "staedtebund",
+    "staedtebund_scrape",
+    "staedtebund_redirect",
+    "source_agreement",
+    "wikidata",
+    "wikidata_scrape",
+    "wikidata_redirect",
+    "guess",
+    "guess_scrape",
+    "guess_redirect",
+]
+
+SOURCE_KEYS = [
+    source
+    for source in SOURCE_PRIORITY
+    if source != "source_agreement"
+]
 
 CONCURRENCY_POSTPROCESS = 10
